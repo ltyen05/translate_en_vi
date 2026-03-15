@@ -1,0 +1,60 @@
+
+--- DỊCH CÂU: 'Deploying active directory lightweight directory services can be challenging.' ---
+
+[CONTEXT ĐƯỢC TẠO RA]:
+[NGỮ CẢNH BẢN DỊCH VÍ DỤ (TRANSLATION MEMORY)]
+English: I hope you had more success than me.
+Vietnamese meaning: - Tôi hy vọng anh đạt được nhiều thành công hơn tôi.
+
+[TỪ ĐIỂN THUẬT NGỮ (GLOSSARY)]
+- 'active directory lightweight directory services': Dịch là 'Dịch vụ Thư mục Hạng nhẹ Active Directory' -> Rule: Microsoft Terminology. Definition: A Lightweight Directory Access Protocol (LDAP) directory service that provides flexible support for directory-enabled applications, without the restrictions of Active Directory Domain Services (AD DS).
+- 'active directory': Dịch là 'AD DS' -> Rule: Microsoft Terminology. Definition: The Windows-based directory service that stores information about objects on a network and makes this information available to users and network administrators.
+- 'directory': Dịch là 'danh bạ' -> Rule: Microsoft Terminology. Definition: A list of contacts where users can look up contact information.
+- 'active': Dịch là 'hiện hoạt' -> Rule: Microsoft Terminology. Definition: Status of a Microsoft Managed Desktop device if it meets all of these criteria: synced with Intune in the last 5 days AND at least 6 hours powered on and connected to Internet AND at least 2 hours continuously powered on and connected to Internet.
+
+
+[KẾT QUẢ TỪ GEMINI]:
+Triển khai Dịch vụ Thư mục Hạng nhẹ Active Directory có thể khó khăn.
+--------------------------------------------------
+
+--- DỊCH CÂU: 'We are building our new backend using spring boot and dependency injection.' ---
+
+[CONTEXT ĐƯỢC TẠO RA]:
+[NGỮ CẢNH BẢN DỊCH VÍ DỤ (TRANSLATION MEMORY)]
+English: You want to make it on your own.
+Vietnamese meaning: Cậu muốn tự lo 1 mình?
+
+[TỪ ĐIỂN THUẬT NGỮ (GLOSSARY)]
+- 'dependency': Dịch là 'sự phụ thuộc' -> Rule: Microsoft Terminology. Definition: A directed relationship between two objects, such as components, objects, or features. For example, if feature A depends on feature B, B is a dependency of A.
+- 'and': Dịch là 'AND' -> Rule: Microsoft Terminology. Definition: The Logical Excel function that returns TRUE if all of its arguments are TRUE.
+- 'spring boot': Dịch là 'Spring Boot' -> Rule: Là tên framework, tuyệt đối giữ nguyên không dịch.
+- 'dependency injection': Dịch là 'Tiêm phụ thuộc (Dependency Injection)' -> Rule: Chủ yếu dịch là 'Tiêm phụ thuộc', nhưng có thể kèm thuật ngữ gốc trong ngoặc.
+- 'backend': Dịch là 'Backend' -> Rule: Tuyệt đối không dịch là 'Mặt sau'. Giữ nguyên 'Backend'.
+
+
+[KẾT QUẢ TỪ GEMINI]:
+Chúng tôi đang xây dựng Backend mới của mình sử dụng Spring Boot và Tiêm phụ thuộc (Dependency Injection).
+--------------------------------------------------
+
+--- DỊCH CÂU: 'This server is used for word processing and business software.' ---
+
+[CONTEXT ĐƯỢC TẠO RA]:
+[NGỮ CẢNH BẢN DỊCH VÍ DỤ (TRANSLATION MEMORY)]
+English: I want to know the size of the market.
+Vietnamese meaning: Và tôi muốn biết về thị trường -- kích thước của nó.
+
+[TỪ ĐIỂN THUẬT NGỮ (GLOSSARY)]
+- 'business software': Dịch là 'ứng dụng kinh doanh' -> Rule: Microsoft Terminology. Definition: Any computer application designed primarily for use in business, as opposed to scientific use or entertainment. In addition to the well-known areas of word processing, spreadsheets, databases, and communications, business software for microcomputers also encompasses such applications as accounting, payroll, financial planning, project management, decision and support systems, personnel record maintenance, and office management.
+- 'word processing': Dịch là 'xử lý văn bản' -> Rule: Microsoft Terminology. Definition: The act of entering and editing text with a word processor.
+- 'server': Dịch là 'máy chủ' -> Rule: Microsoft Terminology. Definition: An entity that hosts web pages and responds to commands from a client.
+- 'is': Dịch là 'công nghệ thông tin' -> Rule: Microsoft Terminology. Definition: The formal name for a company's data processing department.
+- 'business': Dịch là 'nghiệp vụ, kinh doanh, công việc' -> Rule: Microsoft Terminology. Definition: An entity that provides goods and/or services to others.
+- 'word': Dịch là 'Đố chữ' -> Rule: Microsoft Terminology. Definition: The Games subcategory containing games that involve wordplay, like scrabble or crosswords.
+- 'processing': Dịch là 'xử lý' -> Rule: Microsoft Terminology. Definition: A phase in e-discovery where native files are prepared to be loaded into a document review platform, metadata is extracted from files, and data culling techniques are employed.
+- 'software': Dịch là 'phần mềm' -> Rule: Microsoft Terminology. Definition: Instructions that make hardware work.
+- 'and': Dịch là 'AND' -> Rule: Microsoft Terminology. Definition: The Logical Excel function that returns TRUE if all of its arguments are TRUE.
+
+
+[KẾT QUẢ TỪ GEMINI]:
+Máy chủ này được sử dụng cho xử lý văn bản và ứng dụng kinh doanh.
+--------------------------------------------------
