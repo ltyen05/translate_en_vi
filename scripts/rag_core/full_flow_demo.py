@@ -23,9 +23,20 @@ def run_full_flow_demo():
     
     # 3. Input người dùng (Dài và chuyên môn cao)
     user_input = (
-        "The patient presented with persistent vertigo and hearing loss. "
-        "Upon examination, a diagnosis of Meniere's disease was suspected, "
-        "and an intratympanic steroid injection was recommended to alleviate the symptoms."
+        "Ménière's disease represents a sophisticated and often debilitating chronic condition of the inner ear that "
+        "manifests through a complex array of physiological disturbances primarily impacting both auditory perception "
+        "and vestibular equilibrium in affected individuals. This pathological state is clinically recognized by "
+        "recurrent, unpredictable episodes of intense rotational vertigo, which are frequently accompanied by "
+        "significant nausea and vomiting, alongside fluctuating sensorineural hearing loss that may eventually "
+        "progress to permanent impairment over time. Furthermore, patients often experience distressing tinnitus, "
+        "characterized by a persistent ringing or roaring sound, combined with a profound sense of aural pressure "
+        "or fullness within the affected ear, all of which contribute to a substantial reduction in the patient's "
+        "overall functional capacity and quality of life. While the precise underlying etiology of Ménière's disease "
+        "remains elusive to modern medical science, contemporary research suggests that the condition is inherently "
+        "linked to an abnormal accumulation of endolymphatic fluid within the labyrinthine compartments of the "
+        "inner ear, a phenomenon commonly referred to as endolymphatic hydrops. This mechanical distension is "
+        "thought to interfere with the critical transduction of acoustic and balance signals between the peripheral "
+        "sensory organs and the central nervous system, thereby triggering the hallmark symptomatic manifestations of the disorder."
     )
     
     # 4. Bước RAG
