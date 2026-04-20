@@ -14,5 +14,5 @@ def get_perfect_prompt(user_input):
     return full_prompt
 
 if __name__ == "__main__":
-    question = input()
+    question = input("Nhập câu cần dịch: ")
     print(get_perfect_prompt(question))
