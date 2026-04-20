@@ -1,11 +1,11 @@
 # 📋 NHẬT KÝ LUỒNG DỊCH THUẬT RAG (FULL FLOW)
 
-**Thời gian thực hiện**: 2026-04-21 00:04:06
-**Thời gian xử lý AI**: 27.59 giây
+**Thời gian thực hiện**: 2026-04-21 00:05:39
+**Thời gian xử lý AI**: 30.55 giây
 
 ## 1. 📥 ĐẦU VÀO (USER INPUT)
 ```text
-Ménière's disease is a chronic disorder of the inner ear that primarily affects hearing and balance. It is characterized by episodes of vertigo, tinnitus, hearing loss, and a feeling of fullness in the ear. The exact cause of the disease is not well understood, but it is believed to be related to an accumulation of fluid, known as endolymph, in the inner ear. This fluid buildup can interfere with the normal signals between the ear and the brain, leading to the symptoms mentioned above. Diagnosis typically involves a combination of clinical evaluation, hearing tests, and vestibular function tests. Imaging studies, such as MRI, may also be used to rule out other potential causes of the symptoms. Treatment options for Ménière's disease aim to manage the frequency and severity of episodes. These can include lifestyle modifications, such as a low-salt diet, and medications to control vertigo and nausea. In more severe cases, medical procedures like intratympanic steroid injections or surgery may be considered for the patient.
+Ménière's disease represents a sophisticated and often debilitating chronic condition of the inner ear that manifests through a complex array of physiological disturbances primarily impacting both auditory perception and vestibular equilibrium in affected individuals. This pathological state is clinically recognized by recurrent, unpredictable episodes of intense rotational vertigo, which are frequently accompanied by significant nausea and vomiting, alongside fluctuating sensorineural hearing loss that may eventually progress to permanent impairment over time. Furthermore, patients often experience distressing tinnitus, characterized by a persistent ringing or roaring sound, combined with a profound sense of aural pressure or fullness within the affected ear, all of which contribute to a substantial reduction in the patient's overall functional capacity and quality of life. While the precise underlying etiology of Ménière's disease remains elusive to modern medical science, contemporary research suggests that the condition is inherently linked to an abnormal accumulation of endolymphatic fluid within the labyrinthine compartments of the inner ear, a phenomenon commonly referred to as endolymphatic hydrops. This mechanical distension is thought to interfere with the critical transduction of acoustic and balance signals between the peripheral sensory organs and the central nervous system, thereby triggering the hallmark symptomatic manifestations of the disorder.
 ```
 
 ## 2. 🔍 NGỮ CẢNH TRUY XUẤT (RAG CONTEXT)
@@ -13,25 +13,28 @@ Ménière's disease is a chronic disorder of the inner ear that primarily affect
 [NGỮ CẢNH TRI THỨC (STRATEGIC CONTEXT)]
 - Tiếng Anh: Meniere Disease (Meniere's Disease; Endolymphatic Hydrops) By Mickie Hamiter, MD, New York Presbyterian Columbia Reviewed / Revised May 2023 View Patient Education Symptoms and Signs Diagnosis Treatment Key Points Meniere disease is an inner ear disorder that causes vertigo, nausea, fluctuating sensorineural hearing loss, and tinnitus.
   Nghĩa: Bệnh Meniere (Bệnh Meniere, sũng nước mê nhĩ) Theo Lawrence R. Lustig, MD, Columbia University Medical Center and New York Presbyterian Hospital Đánh giá về mặt y tế Thg6 2021 | đã sửa đổi Thg9 2022 Triệu chứng và Dấu hiệu Chẩn đoán Điều trị Những điểm chính Bệnh Meniere là rối loạn tai trong gây ra chóng mặt, mất thính giác về nghe kém tiếp nhận dao động và ù tai.
-- Tiếng Anh: Treatment of Meniere Disease Symptom relief with antiemetics, antihistamines, or benzodiazepines Diuretics and low-salt diet Rarely vestibular ablation by medications or surgery Meniere disease tends to be self-limited.
-  Nghĩa: Điều trị Bệnh Meniere Giảm triệu chứng bằng thuốc chống nôn, thuốc kháng histamine, hoặc benzodiazepine Thuốc lợi tiểu và chế độ ăn ít muối Hiếm khi huỷ diệt tiền đình bằng thuốc hoặc phẫu thuật Bệnh Meniere có xu hướng tự giới hạn.
-- Tiếng Anh: Patients with symptoms suggesting Meniere disease should have an and an MRI (with gadolinium enhancement) of the central nervous system with attention to the internal auditory canals to exclude other causes.
-  Nghĩa: Bệnh nhân có triệu chứng gợi ý bệnh Meniere nên đo thính lực đồ và chụp MRI (có tiêm đối quang từ) của nội sọ với sự chú ý đến các tai trong để loại trừ các nguyên nhân khác.
-- Tiếng Anh: Diagnosis of Meniere Disease Clinical evaluation Audiogram and gadolinium-enhanced MRI to rule out other causes The diagnosis of Meniere disease is made clinically.
-  Nghĩa: Chẩn đoán Bệnh Meniere Đánh giá lâm sàng Thính lực đồ và MRI tiêm đối quang từ để loại trừ các nguyên nhân khác Chẩn đoán bệnh Meniere được dựa vào lâm sàng.
-- Tiếng Anh: Although bilateral Meniere disease can occur, bilateral symptoms increase the likelihood of an alternate diagnosis (eg, vestibular migraine).
-  Nghĩa: Mặc dù có thể xảy ra bệnh Meniere hai bên nhưng các triệu chứng hai bên sẽ làm tăng khả năng xảy ra chẩn đoán thay thế (ví dụ như migraine tiền đình).
-- Tiếng Anh: The absence of concomitant tinnitus or hearing loss is a hallmark of vestibular neuronitis and helps distinguish it from Meniere disease as well as labyrinthitis.
-  Nghĩa: Sự vắng mặt của chứng ù tai hoặc mất thính giác đồng thời là dấu hiệu của viêm thần kinh tiền đình và giúp phân biệt nó với Bệnh Meniere cũng như viêm mê nhĩ.
+- Tiếng Anh: Fluctuating unilateral hearing loss accompanied by aural fullness, tinnitus, and vertigo also suggests Meniere syndrome.
+  Nghĩa: Nghe kém một bên dao động kèm theo đầy tai, ù tai và chóng mặt cũng gợi ý hội chứng Meniere.
+- Tiếng Anh: Two of the most common specific causes are disorders of the inner ear: benign paroxysmal positional vertigo and Meniere disease.
+  Nghĩa: Hai trong số các nguyên nhân cụ thể nhất là rối loạn của tai trong: chóng mặt kịch phát tư thế lành tính và Bệnh Meniere.
+- Tiếng Anh: Key Points Meniere disease typically causes vertigo with nausea and vomiting, unilateral tinnitus, and chronic, progressive hearing loss.
+  Nghĩa: Những điểm chính Bệnh Meniere thường gây chóng mặt với buồn nôn và nôn ói, ù tai một bên, và nghe kém tiến triển.
 - Tiếng Anh: Symptoms and Signs of Meniere Disease Patients with Meniere disease have sudden attacks of vertigo that usually last for 20 minutes to 12 hours; rarely, the attacks last up to 24 hours.
   Nghĩa: Triệu chứng và dấu hiệu của bệnh Meniere Bệnh nhân có các cơn chóng mặt thường kéo dài từ 1 đến 6 giờ, nhưng có thể (ít) kéo dài đến 24 giờ, thường là buồn nôn và nôn.
 - Tiếng Anh: Inner ear disorders include Benign paroxysmal positional vertigo Drug-induced ototoxicity Herpes zoster oticus Meniere disease Purulent labyrinthitis Vestibular neuronitis Vestibular schwannoma Inside the Ear
   Nghĩa: Các rối loạn tai trong bao gồm Chóng mặt kịch phát tư thế lành tính Ngộ độc tai trong do thuốc Zona tai Bệnh Meniere Viêm mê nhĩ mủ Viêm dây thần kinh tiền đình u xơ thần kinh tiền đình Bên trong tai
-- Tiếng Anh: Key Points Meniere disease typically causes vertigo with nausea and vomiting, unilateral tinnitus, and chronic, progressive hearing loss.
-  Nghĩa: Những điểm chính Bệnh Meniere thường gây chóng mặt với buồn nôn và nôn ói, ù tai một bên, và nghe kém tiến triển.
+- Tiếng Anh: The absence of concomitant tinnitus or hearing loss is a hallmark of vestibular neuronitis and helps distinguish it from Meniere disease as well as labyrinthitis.
+  Nghĩa: Sự vắng mặt của chứng ù tai hoặc mất thính giác đồng thời là dấu hiệu của viêm thần kinh tiền đình và giúp phân biệt nó với Bệnh Meniere cũng như viêm mê nhĩ.
+- Tiếng Anh: It can be the result of vestibular neuronitis, migraine with vertigo, Meniere disease, head trauma or inner ear surgery.
+  Nghĩa: Tình trạng này có thể là kết quả của viêm dây thần kinh tiền đình, đau nửa đầu kèm theo chóng mặt, bệnh Meniere, chấn thương đầu hoặc sau phẫu thuật tai trong.
+- Tiếng Anh: Although bilateral Meniere disease can occur, bilateral symptoms increase the likelihood of an alternate diagnosis (eg, vestibular migraine).
+  Nghĩa: Mặc dù có thể xảy ra bệnh Meniere hai bên nhưng các triệu chứng hai bên sẽ làm tăng khả năng xảy ra chẩn đoán thay thế (ví dụ như migraine tiền đình).
+- Tiếng Anh: In Meniere disease, pressure and volume changes in the labyrinthine endolymph affect inner ear function.
+  Nghĩa: Trong bệnh Meniere, sự thay đổi áp lực và thể tích của nội dịch mê nhĩ ảnh hưởng đến chức năng tai trong.
 
 [THUẬT NGỮ CẦN LƯU Ý (GLOSSARY)]
 - 'Ménière s disease': Bệnh Ménière (Lĩnh vực: medical_glossary)
+- 'Tinnitus': Ù tai (Lĩnh vực: medical_glossary)
 
 ```
 
@@ -59,27 +62,30 @@ Bạn sẽ nhận được các thông tin sau:
 * Ngữ cảnh truy xuất (RAG): [NGỮ CẢNH TRI THỨC (STRATEGIC CONTEXT)]
 - Tiếng Anh: Meniere Disease (Meniere's Disease; Endolymphatic Hydrops) By Mickie Hamiter, MD, New York Presbyterian Columbia Reviewed / Revised May 2023 View Patient Education Symptoms and Signs Diagnosis Treatment Key Points Meniere disease is an inner ear disorder that causes vertigo, nausea, fluctuating sensorineural hearing loss, and tinnitus.
   Nghĩa: Bệnh Meniere (Bệnh Meniere, sũng nước mê nhĩ) Theo Lawrence R. Lustig, MD, Columbia University Medical Center and New York Presbyterian Hospital Đánh giá về mặt y tế Thg6 2021 | đã sửa đổi Thg9 2022 Triệu chứng và Dấu hiệu Chẩn đoán Điều trị Những điểm chính Bệnh Meniere là rối loạn tai trong gây ra chóng mặt, mất thính giác về nghe kém tiếp nhận dao động và ù tai.
-- Tiếng Anh: Treatment of Meniere Disease Symptom relief with antiemetics, antihistamines, or benzodiazepines Diuretics and low-salt diet Rarely vestibular ablation by medications or surgery Meniere disease tends to be self-limited.
-  Nghĩa: Điều trị Bệnh Meniere Giảm triệu chứng bằng thuốc chống nôn, thuốc kháng histamine, hoặc benzodiazepine Thuốc lợi tiểu và chế độ ăn ít muối Hiếm khi huỷ diệt tiền đình bằng thuốc hoặc phẫu thuật Bệnh Meniere có xu hướng tự giới hạn.
-- Tiếng Anh: Patients with symptoms suggesting Meniere disease should have an and an MRI (with gadolinium enhancement) of the central nervous system with attention to the internal auditory canals to exclude other causes.
-  Nghĩa: Bệnh nhân có triệu chứng gợi ý bệnh Meniere nên đo thính lực đồ và chụp MRI (có tiêm đối quang từ) của nội sọ với sự chú ý đến các tai trong để loại trừ các nguyên nhân khác.
-- Tiếng Anh: Diagnosis of Meniere Disease Clinical evaluation Audiogram and gadolinium-enhanced MRI to rule out other causes The diagnosis of Meniere disease is made clinically.
-  Nghĩa: Chẩn đoán Bệnh Meniere Đánh giá lâm sàng Thính lực đồ và MRI tiêm đối quang từ để loại trừ các nguyên nhân khác Chẩn đoán bệnh Meniere được dựa vào lâm sàng.
-- Tiếng Anh: Although bilateral Meniere disease can occur, bilateral symptoms increase the likelihood of an alternate diagnosis (eg, vestibular migraine).
-  Nghĩa: Mặc dù có thể xảy ra bệnh Meniere hai bên nhưng các triệu chứng hai bên sẽ làm tăng khả năng xảy ra chẩn đoán thay thế (ví dụ như migraine tiền đình).
-- Tiếng Anh: The absence of concomitant tinnitus or hearing loss is a hallmark of vestibular neuronitis and helps distinguish it from Meniere disease as well as labyrinthitis.
-  Nghĩa: Sự vắng mặt của chứng ù tai hoặc mất thính giác đồng thời là dấu hiệu của viêm thần kinh tiền đình và giúp phân biệt nó với Bệnh Meniere cũng như viêm mê nhĩ.
+- Tiếng Anh: Fluctuating unilateral hearing loss accompanied by aural fullness, tinnitus, and vertigo also suggests Meniere syndrome.
+  Nghĩa: Nghe kém một bên dao động kèm theo đầy tai, ù tai và chóng mặt cũng gợi ý hội chứng Meniere.
+- Tiếng Anh: Two of the most common specific causes are disorders of the inner ear: benign paroxysmal positional vertigo and Meniere disease.
+  Nghĩa: Hai trong số các nguyên nhân cụ thể nhất là rối loạn của tai trong: chóng mặt kịch phát tư thế lành tính và Bệnh Meniere.
+- Tiếng Anh: Key Points Meniere disease typically causes vertigo with nausea and vomiting, unilateral tinnitus, and chronic, progressive hearing loss.
+  Nghĩa: Những điểm chính Bệnh Meniere thường gây chóng mặt với buồn nôn và nôn ói, ù tai một bên, và nghe kém tiến triển.
 - Tiếng Anh: Symptoms and Signs of Meniere Disease Patients with Meniere disease have sudden attacks of vertigo that usually last for 20 minutes to 12 hours; rarely, the attacks last up to 24 hours.
   Nghĩa: Triệu chứng và dấu hiệu của bệnh Meniere Bệnh nhân có các cơn chóng mặt thường kéo dài từ 1 đến 6 giờ, nhưng có thể (ít) kéo dài đến 24 giờ, thường là buồn nôn và nôn.
 - Tiếng Anh: Inner ear disorders include Benign paroxysmal positional vertigo Drug-induced ototoxicity Herpes zoster oticus Meniere disease Purulent labyrinthitis Vestibular neuronitis Vestibular schwannoma Inside the Ear
   Nghĩa: Các rối loạn tai trong bao gồm Chóng mặt kịch phát tư thế lành tính Ngộ độc tai trong do thuốc Zona tai Bệnh Meniere Viêm mê nhĩ mủ Viêm dây thần kinh tiền đình u xơ thần kinh tiền đình Bên trong tai
-- Tiếng Anh: Key Points Meniere disease typically causes vertigo with nausea and vomiting, unilateral tinnitus, and chronic, progressive hearing loss.
-  Nghĩa: Những điểm chính Bệnh Meniere thường gây chóng mặt với buồn nôn và nôn ói, ù tai một bên, và nghe kém tiến triển.
+- Tiếng Anh: The absence of concomitant tinnitus or hearing loss is a hallmark of vestibular neuronitis and helps distinguish it from Meniere disease as well as labyrinthitis.
+  Nghĩa: Sự vắng mặt của chứng ù tai hoặc mất thính giác đồng thời là dấu hiệu của viêm thần kinh tiền đình và giúp phân biệt nó với Bệnh Meniere cũng như viêm mê nhĩ.
+- Tiếng Anh: It can be the result of vestibular neuronitis, migraine with vertigo, Meniere disease, head trauma or inner ear surgery.
+  Nghĩa: Tình trạng này có thể là kết quả của viêm dây thần kinh tiền đình, đau nửa đầu kèm theo chóng mặt, bệnh Meniere, chấn thương đầu hoặc sau phẫu thuật tai trong.
+- Tiếng Anh: Although bilateral Meniere disease can occur, bilateral symptoms increase the likelihood of an alternate diagnosis (eg, vestibular migraine).
+  Nghĩa: Mặc dù có thể xảy ra bệnh Meniere hai bên nhưng các triệu chứng hai bên sẽ làm tăng khả năng xảy ra chẩn đoán thay thế (ví dụ như migraine tiền đình).
+- Tiếng Anh: In Meniere disease, pressure and volume changes in the labyrinthine endolymph affect inner ear function.
+  Nghĩa: Trong bệnh Meniere, sự thay đổi áp lực và thể tích của nội dịch mê nhĩ ảnh hưởng đến chức năng tai trong.
 
 [THUẬT NGỮ CẦN LƯU Ý (GLOSSARY)]
 - 'Ménière s disease': Bệnh Ménière (Lĩnh vực: medical_glossary)
+- 'Tinnitus': Ù tai (Lĩnh vực: medical_glossary)
 
-* Văn bản nguồn: Ménière's disease is a chronic disorder of the inner ear that primarily affects hearing and balance. It is characterized by episodes of vertigo, tinnitus, hearing loss, and a feeling of fullness in the ear. The exact cause of the disease is not well understood, but it is believed to be related to an accumulation of fluid, known as endolymph, in the inner ear. This fluid buildup can interfere with the normal signals between the ear and the brain, leading to the symptoms mentioned above. Diagnosis typically involves a combination of clinical evaluation, hearing tests, and vestibular function tests. Imaging studies, such as MRI, may also be used to rule out other potential causes of the symptoms. Treatment options for Ménière's disease aim to manage the frequency and severity of episodes. These can include lifestyle modifications, such as a low-salt diet, and medications to control vertigo and nausea. In more severe cases, medical procedures like intratympanic steroid injections or surgery may be considered for the patient.
+* Văn bản nguồn: Ménière's disease represents a sophisticated and often debilitating chronic condition of the inner ear that manifests through a complex array of physiological disturbances primarily impacting both auditory perception and vestibular equilibrium in affected individuals. This pathological state is clinically recognized by recurrent, unpredictable episodes of intense rotational vertigo, which are frequently accompanied by significant nausea and vomiting, alongside fluctuating sensorineural hearing loss that may eventually progress to permanent impairment over time. Furthermore, patients often experience distressing tinnitus, characterized by a persistent ringing or roaring sound, combined with a profound sense of aural pressure or fullness within the affected ear, all of which contribute to a substantial reduction in the patient's overall functional capacity and quality of life. While the precise underlying etiology of Ménière's disease remains elusive to modern medical science, contemporary research suggests that the condition is inherently linked to an abnormal accumulation of endolymphatic fluid within the labyrinthine compartments of the inner ear, a phenomenon commonly referred to as endolymphatic hydrops. This mechanical distension is thought to interfere with the critical transduction of acoustic and balance signals between the peripheral sensory organs and the central nervous system, thereby triggering the hallmark symptomatic manifestations of the disorder.
 * Ngôn ngữ nguồn: English
 * Ngôn ngữ đích: Vietnamese
 
@@ -108,25 +114,28 @@ Bạn sẽ nhận được các thông tin sau:
 * Dùng [NGỮ CẢNH TRI THỨC (STRATEGIC CONTEXT)]
 - Tiếng Anh: Meniere Disease (Meniere's Disease; Endolymphatic Hydrops) By Mickie Hamiter, MD, New York Presbyterian Columbia Reviewed / Revised May 2023 View Patient Education Symptoms and Signs Diagnosis Treatment Key Points Meniere disease is an inner ear disorder that causes vertigo, nausea, fluctuating sensorineural hearing loss, and tinnitus.
   Nghĩa: Bệnh Meniere (Bệnh Meniere, sũng nước mê nhĩ) Theo Lawrence R. Lustig, MD, Columbia University Medical Center and New York Presbyterian Hospital Đánh giá về mặt y tế Thg6 2021 | đã sửa đổi Thg9 2022 Triệu chứng và Dấu hiệu Chẩn đoán Điều trị Những điểm chính Bệnh Meniere là rối loạn tai trong gây ra chóng mặt, mất thính giác về nghe kém tiếp nhận dao động và ù tai.
-- Tiếng Anh: Treatment of Meniere Disease Symptom relief with antiemetics, antihistamines, or benzodiazepines Diuretics and low-salt diet Rarely vestibular ablation by medications or surgery Meniere disease tends to be self-limited.
-  Nghĩa: Điều trị Bệnh Meniere Giảm triệu chứng bằng thuốc chống nôn, thuốc kháng histamine, hoặc benzodiazepine Thuốc lợi tiểu và chế độ ăn ít muối Hiếm khi huỷ diệt tiền đình bằng thuốc hoặc phẫu thuật Bệnh Meniere có xu hướng tự giới hạn.
-- Tiếng Anh: Patients with symptoms suggesting Meniere disease should have an and an MRI (with gadolinium enhancement) of the central nervous system with attention to the internal auditory canals to exclude other causes.
-  Nghĩa: Bệnh nhân có triệu chứng gợi ý bệnh Meniere nên đo thính lực đồ và chụp MRI (có tiêm đối quang từ) của nội sọ với sự chú ý đến các tai trong để loại trừ các nguyên nhân khác.
-- Tiếng Anh: Diagnosis of Meniere Disease Clinical evaluation Audiogram and gadolinium-enhanced MRI to rule out other causes The diagnosis of Meniere disease is made clinically.
-  Nghĩa: Chẩn đoán Bệnh Meniere Đánh giá lâm sàng Thính lực đồ và MRI tiêm đối quang từ để loại trừ các nguyên nhân khác Chẩn đoán bệnh Meniere được dựa vào lâm sàng.
-- Tiếng Anh: Although bilateral Meniere disease can occur, bilateral symptoms increase the likelihood of an alternate diagnosis (eg, vestibular migraine).
-  Nghĩa: Mặc dù có thể xảy ra bệnh Meniere hai bên nhưng các triệu chứng hai bên sẽ làm tăng khả năng xảy ra chẩn đoán thay thế (ví dụ như migraine tiền đình).
-- Tiếng Anh: The absence of concomitant tinnitus or hearing loss is a hallmark of vestibular neuronitis and helps distinguish it from Meniere disease as well as labyrinthitis.
-  Nghĩa: Sự vắng mặt của chứng ù tai hoặc mất thính giác đồng thời là dấu hiệu của viêm thần kinh tiền đình và giúp phân biệt nó với Bệnh Meniere cũng như viêm mê nhĩ.
+- Tiếng Anh: Fluctuating unilateral hearing loss accompanied by aural fullness, tinnitus, and vertigo also suggests Meniere syndrome.
+  Nghĩa: Nghe kém một bên dao động kèm theo đầy tai, ù tai và chóng mặt cũng gợi ý hội chứng Meniere.
+- Tiếng Anh: Two of the most common specific causes are disorders of the inner ear: benign paroxysmal positional vertigo and Meniere disease.
+  Nghĩa: Hai trong số các nguyên nhân cụ thể nhất là rối loạn của tai trong: chóng mặt kịch phát tư thế lành tính và Bệnh Meniere.
+- Tiếng Anh: Key Points Meniere disease typically causes vertigo with nausea and vomiting, unilateral tinnitus, and chronic, progressive hearing loss.
+  Nghĩa: Những điểm chính Bệnh Meniere thường gây chóng mặt với buồn nôn và nôn ói, ù tai một bên, và nghe kém tiến triển.
 - Tiếng Anh: Symptoms and Signs of Meniere Disease Patients with Meniere disease have sudden attacks of vertigo that usually last for 20 minutes to 12 hours; rarely, the attacks last up to 24 hours.
   Nghĩa: Triệu chứng và dấu hiệu của bệnh Meniere Bệnh nhân có các cơn chóng mặt thường kéo dài từ 1 đến 6 giờ, nhưng có thể (ít) kéo dài đến 24 giờ, thường là buồn nôn và nôn.
 - Tiếng Anh: Inner ear disorders include Benign paroxysmal positional vertigo Drug-induced ototoxicity Herpes zoster oticus Meniere disease Purulent labyrinthitis Vestibular neuronitis Vestibular schwannoma Inside the Ear
   Nghĩa: Các rối loạn tai trong bao gồm Chóng mặt kịch phát tư thế lành tính Ngộ độc tai trong do thuốc Zona tai Bệnh Meniere Viêm mê nhĩ mủ Viêm dây thần kinh tiền đình u xơ thần kinh tiền đình Bên trong tai
-- Tiếng Anh: Key Points Meniere disease typically causes vertigo with nausea and vomiting, unilateral tinnitus, and chronic, progressive hearing loss.
-  Nghĩa: Những điểm chính Bệnh Meniere thường gây chóng mặt với buồn nôn và nôn ói, ù tai một bên, và nghe kém tiến triển.
+- Tiếng Anh: The absence of concomitant tinnitus or hearing loss is a hallmark of vestibular neuronitis and helps distinguish it from Meniere disease as well as labyrinthitis.
+  Nghĩa: Sự vắng mặt của chứng ù tai hoặc mất thính giác đồng thời là dấu hiệu của viêm thần kinh tiền đình và giúp phân biệt nó với Bệnh Meniere cũng như viêm mê nhĩ.
+- Tiếng Anh: It can be the result of vestibular neuronitis, migraine with vertigo, Meniere disease, head trauma or inner ear surgery.
+  Nghĩa: Tình trạng này có thể là kết quả của viêm dây thần kinh tiền đình, đau nửa đầu kèm theo chóng mặt, bệnh Meniere, chấn thương đầu hoặc sau phẫu thuật tai trong.
+- Tiếng Anh: Although bilateral Meniere disease can occur, bilateral symptoms increase the likelihood of an alternate diagnosis (eg, vestibular migraine).
+  Nghĩa: Mặc dù có thể xảy ra bệnh Meniere hai bên nhưng các triệu chứng hai bên sẽ làm tăng khả năng xảy ra chẩn đoán thay thế (ví dụ như migraine tiền đình).
+- Tiếng Anh: In Meniere disease, pressure and volume changes in the labyrinthine endolymph affect inner ear function.
+  Nghĩa: Trong bệnh Meniere, sự thay đổi áp lực và thể tích của nội dịch mê nhĩ ảnh hưởng đến chức năng tai trong.
 
 [THUẬT NGỮ CẦN LƯU Ý (GLOSSARY)]
 - 'Ménière s disease': Bệnh Ménière (Lĩnh vực: medical_glossary)
+- 'Tinnitus': Ù tai (Lĩnh vực: medical_glossary)
  để:
   * Làm rõ nghĩa
   * Đảm bảo tính nhất quán
@@ -203,7 +212,7 @@ KHÔNG được:
 Nếu đạt tất cả → xuất bản dịch.
 <|im_end|>
 <|im_start|>user
-Dịch câu này: Ménière's disease is a chronic disorder of the inner ear that primarily affects hearing and balance. It is characterized by episodes of vertigo, tinnitus, hearing loss, and a feeling of fullness in the ear. The exact cause of the disease is not well understood, but it is believed to be related to an accumulation of fluid, known as endolymph, in the inner ear. This fluid buildup can interfere with the normal signals between the ear and the brain, leading to the symptoms mentioned above. Diagnosis typically involves a combination of clinical evaluation, hearing tests, and vestibular function tests. Imaging studies, such as MRI, may also be used to rule out other potential causes of the symptoms. Treatment options for Ménière's disease aim to manage the frequency and severity of episodes. These can include lifestyle modifications, such as a low-salt diet, and medications to control vertigo and nausea. In more severe cases, medical procedures like intratympanic steroid injections or surgery may be considered for the patient.<|im_end|>
+Dịch câu này: Ménière's disease represents a sophisticated and often debilitating chronic condition of the inner ear that manifests through a complex array of physiological disturbances primarily impacting both auditory perception and vestibular equilibrium in affected individuals. This pathological state is clinically recognized by recurrent, unpredictable episodes of intense rotational vertigo, which are frequently accompanied by significant nausea and vomiting, alongside fluctuating sensorineural hearing loss that may eventually progress to permanent impairment over time. Furthermore, patients often experience distressing tinnitus, characterized by a persistent ringing or roaring sound, combined with a profound sense of aural pressure or fullness within the affected ear, all of which contribute to a substantial reduction in the patient's overall functional capacity and quality of life. While the precise underlying etiology of Ménière's disease remains elusive to modern medical science, contemporary research suggests that the condition is inherently linked to an abnormal accumulation of endolymphatic fluid within the labyrinthine compartments of the inner ear, a phenomenon commonly referred to as endolymphatic hydrops. This mechanical distension is thought to interfere with the critical transduction of acoustic and balance signals between the peripheral sensory organs and the central nervous system, thereby triggering the hallmark symptomatic manifestations of the disorder.<|im_end|>
 <|im_start|>assistant
 
 ```
@@ -211,4 +220,4 @@ Dịch câu này: Ménière's disease is a chronic disorder of the inner ear tha
 ## 4. 📤 KẾT QUẢ ĐẦU RA (AI TRANSLATION)
 **Dịch sang tiếng Việt**:
 
-> Bệnh Meniere là một rối loạn mãn tính của tai trong chủ yếu ảnh hưởng đến nghe và cân bằng. Bệnh được đặc trưng bởi các cơn chóng mặt, ù tai, mất thính lực và cảm giác đầy tai. Cái gọi là nguyên nhân chính xác của bệnh chưa được hiểu rõ, nhưng được cho là liên quan đến sự tích tụ của chất lỏng, được gọi là endolymph, trong tai trong. Sự tích tụ chất lỏng này có thể làm gián đoạn các tín hiệu bình thường giữa tai và não, dẫn đến các triệu chứng được nêu trên. Chẩn đoán thường bao gồm sự kết hợp của đánh giá lâm sàng, các bài kiểm tra nghe và các bài kiểm tra chức năng tiền đình. Các nghiên cứu hình ảnh, như MRI, cũng có thể được sử dụng để loại trừ các nguyên nhân tiềm năng khác của triệu chứng. Các lựa chọn điều trị cho bệnh Meniere nhằm quản lý tần suất và mức độ nghiêm trọng của các cơn. Những điều này có thể bao gồm các thay đổi lối sống, như chế độ ăn ít muối, và thuốc để kiểm soát chóng mặt và buồn nôn. Trong các trường hợp nặng hơn, các thủ thuật y khoa như tiêm steroid qua màng nhĩ hoặc phẫu thuật có thể được xem xét cho bệnh nhân.
+> Bệnh Meniere đại diện cho một tình trạng mãn tính phức tạp và thường gây mất khả năng hoạt động của tai trong, biểu hiện qua một loạt các rối loạn sinh lý ảnh hưởng chủ yếu đến cả nhận thức về âm thanh và cân bằng của tai trong ở các cá nhân bị ảnh hưởng. Trạng thái bệnh lý này được chẩn đoán lâm sàng bởi các cơn chóng mặt xoay mạnh liên tục và không dự đoán được, thường đi kèm với buồn nôn và nôn nghiêm trọng, cùng với mất thính giác về nghe tiếp nhận dao động có thể tiến triển thành mất thính giác vĩnh viễn theo thời gian. Ngoài ra, bệnh nhân thường trải qua cảm giác ù tai gây khó chịu, đặc trưng bởi tiếng kêu hoặc tiếng vang liên tục, kết hợp với cảm giác áp lực hoặc đầy tai trong ảnh hưởng đến tai, tất cả những điều này góp phần làm giảm đáng kể khả năng hoạt động tổng thể và chất lượng cuộc sống của bệnh nhân. Mặc dù nguyên nhân cơ bản của bệnh Meniere vẫn là một bí ẩn đối với khoa học y học hiện đại, các nghiên cứu hiện đại cho thấy tình trạng này có liên quan đến sự tích tụ bất thường của dịch endolymphatic trong các phần tử của tai trong, một hiện tượng thường được gọi là endolymphatic hydrops. Sự căng cơ học này được cho là can thiệp vào quá trình chuyển đổi quan trọng của tín hiệu âm thanh và cân bằng giữa các cơ quan cảm nhận ngoại vi và hệ thần kinh trung ương, từ đó gây ra các triệu chứng đặc trưng của bệnh.
