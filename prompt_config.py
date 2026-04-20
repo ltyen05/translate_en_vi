@@ -1,9 +1,10 @@
 import chromadb
 from chromadb.utils import embedding_functions
 import re
+import unicodedata
 from sentence_transformers import CrossEncoder
 
-#1.
+# 1. System Prompt Template
 system_prompt = """Bạn là một hệ thống dịch đa ngôn ngữ cấp chuyên gia, được tối ưu cho dịch theo ngữ cảnh (context-aware) và theo lĩnh vực (domain-aware) sử dụng Retrieval-Augmented Generation (RAG).
 
 ---
@@ -125,90 +126,143 @@ KHÔNG được:
 Nếu đạt tất cả → xuất bản dịch.
 """
 
-# Sử dụng mô hình Embedding mặc định (Local MiniLM - đồng bộ với master_indexer.py)
+# 2. Khởi tạo ChromaDB
 local_ef = embedding_functions.DefaultEmbeddingFunction()
-
 client = chromadb.PersistentClient(path="./VectorDB_Gemini")
-
-# Kết nối tới Collection chính được tạo bởi master_indexer.py
 collection = client.get_or_create_collection(
     name="multi_domain_rag_kb",
     embedding_function=local_ef
 )
 
-# KHỞI TẠO RERANKER (Multi-stage Retrieval)
-print("Loading Reranker model (cross-encoder/ms-marco-MiniLM-L-6-v2)...")
+# 3. Khởi tạo Reranker
+print("Loading Reranker model (ms-marco-MiniLM-L-6-v2) for multi-stage RAG...")
 reranker = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
 
+def normalize_text(text: str) -> str:
+    """Loại bỏ dấu (accents) và chuẩn hóa ký tự để so khớp linh hoạt."""
+    if not text: return ""
+    text = unicodedata.normalize('NFD', text.lower())
+    text = ''.join([c for c in text if unicodedata.category(c) != 'Mn'])
+    text = unicodedata.normalize('NFC', text)
+    # Thay ký tự đặc biệt bằng dấu cách
+    text = re.sub(r'[^a-zA-Z0-9\s]', ' ', text)
+    return ' '.join(text.split())
+
 def get_context_prompt(user_input, domain=None):
-    # Prepare metadata filter if domain is provided
-    where_filter = {"domain": domain} if domain else None
+    """
+    Truy xuất ngữ cảnh và thuật ngữ từ cơ sở tri thức (RAG).
+    Sử dụng tìm kiếm đa tầng và xếp hạng lại (Reranking).
+    """
+    # 0. Chuẩn bị đầu vào
+    user_input_norm = normalize_text(user_input)
+    # Trích xuất từ khóa để tìm Glossary chính xác hơn
+    keywords = [w for w in re.split(r'\W+', user_input) if len(w) > 3]
+    
+    domains_to_search = []
+    if domain:
+        if "_" in domain:
+            domains_to_search = [domain]
+        else:
+            domains_to_search = [f"{domain}_glossary", f"{domain}_context"]
+    
+    # 1. Truy xuất đa tầng (Multi-Query Retrieval)
+    # 1.1 Tìm Glossary
+    gloss_where = {"domain": {"$in": [d for d in domains_to_search if "glossary" in d]}} if domains_to_search else {"domain": {"$ne": ""}}
+    gloss_queries = [user_input] + keywords[:5]
+    gloss_results = collection.query(query_texts=gloss_queries, n_results=15, where=gloss_where)
 
-    # --- STAGE 1: RETRIEVAL (Vector Search) ---
-    # Lấy 50 ứng viên tiềm năng nhất (Recall cao)
-    retrieval_results = collection.query(
-        query_texts=[user_input],
-        n_results=50,
-        where=where_filter
-    )
+    # 1.2 Tìm Context
+    ctx_where = {"domain": {"$in": [d for d in domains_to_search if "context" in d]}} if domains_to_search else None
+    ctx_results = collection.query(query_texts=[user_input], n_results=30, where=ctx_where)
 
-    if not retrieval_results.get("documents") or not retrieval_results["documents"][0]:
+    # Gộp kết quả và lọc trùng
+    all_docs = []
+    all_metas = []
+    seen_ids = set()
+
+    for r in [gloss_results, ctx_results]:
+        if r.get("documents"):
+            for i in range(len(r["documents"])):
+                for j in range(len(r["documents"][i])):
+                    doc_id = r["ids"][i][j]
+                    if doc_id not in seen_ids:
+                        all_docs.append(r["documents"][i][j])
+                        all_metas.append(r["metadatas"][i][j])
+                        seen_ids.add(doc_id)
+
+    if not all_docs:
         return "Không có ngữ cảnh bổ trợ đặc biệt nào được tìm thấy."
 
-    candidates = retrieval_results["documents"][0]
-    metadatas = retrieval_results["metadatas"][0]
-
-    # --- STAGE 2: RERANKING (Cross-Encoding) ---
-    # Chuẩn bị cặp (Query, Document) để chấm điểm
-    hits = []
-    for i in range(len(candidates)):
-        hits.append([user_input, candidates[i]])
-    
-    # Tính toán relevance scores
+    # 2. Xếp hạng lại (Reranking)
+    hits = [[user_input, doc] for doc in all_docs]
     scores = reranker.predict(hits)
     
-    # Kết hợp Score với dữ liệu và sắp xếp lại
-    reranked_results = []
-    for i in range(len(candidates)):
-        reranked_results.append({
-            "text": candidates[i],
-            "metadata": metadatas[i],
+    reranked = []
+    for i in range(len(all_docs)):
+        reranked.append({
+            "text": all_docs[i],
+            "metadata": all_metas[i],
             "score": scores[i]
         })
-    
-    # Sắp xếp giảm dần theo điểm số
-    reranked_results = sorted(reranked_results, key=lambda x: x["score"], reverse=True)
-    
-    # Chỉ lấy Top 10 kết quả tốt nhất sau khi Rerank
-    top_results = reranked_results[:10]
+    # Sắp xếp theo điểm số giảm dần
+    reranked.sort(key=lambda x: x["score"], reverse=True)
+    top_results = reranked[:15] # Lấy top 15 sau khi xếp hạng
 
-    # --- PHẦN TRÌNH BÀY PROMPT ---
+    # 3. Phân loại và tạo prompt
     tm_context = "[NGỮ CẢNH TRI THỨC (STRATEGIC CONTEXT)]\n"
     glossary_context = "[THUẬT NGỮ CẦN LƯU Ý (GLOSSARY)]\n"
+    found_tm = False
+    found_glos = False
     
-    user_input_lower = user_input.lower()
+    # Tập hợp tất cả ứng viên (không chỉ top 15) để tìm glossary chắc chắn hơn
+    # Glossary thường có điểm semantic thấp hơn câu dài nhưng độ chính xác khớp từ lại cao
+    all_candidates = []
+    seen_texts = set()
+    for item in reranked:
+        if item["text"] not in seen_texts:
+            all_candidates.append(item)
+            seen_texts.add(item["text"])
 
-    for item in top_results:
+    # Xử lý Glossary trước trên toàn bộ ứng viên
+    for item in all_candidates:
         text = item["text"]
         meta = item["metadata"]
-        vi_meaning = meta.get("vi", "N/A")
-        item_domain = meta.get("domain", "General")
+        item_domain = str(meta.get("domain", "General"))
+        vi = meta.get("vi", "N/A")
 
-        # Phân loại hiển thị dựa trên độ dài (Glossary vs Context)
-        if len(text.split()) <= 4:
-            # Kiểm tra chính xác từ đó có trong câu không (Regex)
-            pattern = r'\b' + re.escape(text.lower()) + r'\b'
-            if re.search(pattern, user_input_lower):
-                glossary_context += f"- '{text}': {vi_meaning} (Lĩnh vực: {item_domain})\n"
-        else:
-            tm_context += f"- Tiếng Anh: {text}\n  Nghĩa: {vi_meaning}\n"
+        is_glossary = "glossary" in item_domain.lower() or len(text.split()) <= 5
+        
+        if is_glossary:
+            text_norm = normalize_text(text)
+            # Hỗ trợ cả trường hợp "meniere s" và "meniere"
+            pattern = r'\b' + re.escape(text_norm).replace('\ s', '\ ?s?') + r"(?: s)?\b"
+            if re.search(pattern, user_input_norm):
+                # Chỉ thêm nếu chưa có trong glossary_context
+                term_entry = f"- '{text}': {vi} (Lĩnh vực: {item_domain})\n"
+                if term_entry not in glossary_context:
+                    glossary_context += term_entry
+                    found_glos = True
 
-    return f"{tm_context}\n{glossary_context}"
+    # Xử lý Context chỉ lấy Top 10 thực sự chất lượng
+    for item in reranked[:10]:
+        text = item["text"]
+        meta = item["metadata"]
+        item_domain = str(meta.get("domain", "General"))
+        vi = meta.get("vi", "N/A")
+
+        is_glossary = "glossary" in item_domain.lower() or len(text.split()) <= 5
+        if not is_glossary:
+            tm_context += f"- Tiếng Anh: {text}\n  Nghĩa: {vi}\n"
+            found_tm = True
+
+    final_prompt = ""
+    if found_tm: final_prompt += tm_context + "\n"
+    if found_glos: final_prompt += glossary_context
+    
+    return final_prompt if final_prompt else "Không tìm thấy thuật ngữ hay ngữ cảnh cụ thể."
 
 def format_qwen_prompt(user_input, context, domain="Đa lĩnh vực", terminology="Xem danh sách bên dưới", source_lang="English", target_lang="Vietnamese"):
-    """
-    Định dạng prompt theo chuẩn ChatML (Qwen) để mô hình nhận diện tốt nhất ngữ cảnh.
-    """
+    """Định dạng prompt ChatML cho Qwen."""
     system_content = system_prompt.format(
         domain=domain,
         terminology=terminology,
@@ -217,10 +271,4 @@ def format_qwen_prompt(user_input, context, domain="Đa lĩnh vực", terminolog
         source_lang=source_lang,
         target_lang=target_lang
     )
-    
-    # Qwen format (ChatML)
-    full_prompt = f"<|im_start|>system\n{system_content}<|im_end|>\n"
-    full_prompt += f"<|im_start|>user\nDịch câu này: {user_input}<|im_end|>\n"
-    full_prompt += "<|im_start|>assistant\n"
-    
-    return full_prompt
+    return f"<|im_start|>system\n{system_content}<|im_end|>\n<|im_start|>user\nDịch câu này: {user_input}<|im_end|>\n<|im_start|>assistant\n"

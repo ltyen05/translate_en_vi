@@ -30,7 +30,7 @@ def run_full_flow_demo():
     
     # 4. Bước RAG
     print("-> Bước 1: Đang truy xuất ngữ cảnh (RAG)...")
-    context = get_context_prompt(user_input, domain="medical_context")
+    context = get_context_prompt(user_input, domain="medical")
     
     # 5. Bước Prompt
     print("-> Bước 2: Đang đóng gói Prompt...")

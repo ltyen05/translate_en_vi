@@ -1,7 +1,7 @@
 # 📋 NHẬT KÝ LUỒNG DỊCH THUẬT RAG (FULL FLOW)
 
-**Thời gian thực hiện**: 2026-04-20 20:43:27
-**Thời gian xử lý AI**: 19.14 giây
+**Thời gian thực hiện**: 2026-04-20 23:56:40
+**Thời gian xử lý AI**: 13.66 giây
 
 ## 1. 📥 ĐẦU VÀO (USER INPUT)
 ```text
@@ -15,12 +15,8 @@ The patient presented with persistent vertigo and hearing loss. Upon examination
   Nghĩa: Nghe kém một bên dao động kèm theo đầy tai, ù tai và chóng mặt cũng gợi ý hội chứng Meniere.
 - Tiếng Anh: Key Points Meniere disease typically causes vertigo with nausea and vomiting, unilateral tinnitus, and chronic, progressive hearing loss.
   Nghĩa: Những điểm chính Bệnh Meniere thường gây chóng mặt với buồn nôn và nôn ói, ù tai một bên, và nghe kém tiến triển.
-- Tiếng Anh: Meniere Disease (Meniere's Disease; Endolymphatic Hydrops) By Mickie Hamiter, MD, New York Presbyterian Columbia Reviewed / Revised May 2023 View Patient Education Symptoms and Signs Diagnosis Treatment Key Points Meniere disease is an inner ear disorder that causes vertigo, nausea, fluctuating sensorineural hearing loss, and tinnitus.
-  Nghĩa: Bệnh Meniere (Bệnh Meniere, sũng nước mê nhĩ) Theo Lawrence R. Lustig, MD, Columbia University Medical Center and New York Presbyterian Hospital Đánh giá về mặt y tế Thg6 2021 | đã sửa đổi Thg9 2022 Triệu chứng và Dấu hiệu Chẩn đoán Điều trị Những điểm chính Bệnh Meniere là rối loạn tai trong gây ra chóng mặt, mất thính giác về nghe kém tiếp nhận dao động và ù tai.
 - Tiếng Anh: Symptoms and Signs of Meniere Disease Patients with Meniere disease have sudden attacks of vertigo that usually last for 20 minutes to 12 hours; rarely, the attacks last up to 24 hours.
   Nghĩa: Triệu chứng và dấu hiệu của bệnh Meniere Bệnh nhân có các cơn chóng mặt thường kéo dài từ 1 đến 6 giờ, nhưng có thể (ít) kéo dài đến 24 giờ, thường là buồn nôn và nôn.
-- Tiếng Anh: Patients with symptoms suggesting Meniere disease should have an and an MRI (with gadolinium enhancement) of the central nervous system with attention to the internal auditory canals to exclude other causes.
-  Nghĩa: Bệnh nhân có triệu chứng gợi ý bệnh Meniere nên đo thính lực đồ và chụp MRI (có tiêm đối quang từ) của nội sọ với sự chú ý đến các tai trong để loại trừ các nguyên nhân khác.
 - Tiếng Anh: Patients with marked hearing loss or severe vertigo are evaluated by an otolaryngologist as soon as possible.
   Nghĩa: Bệnh nhân có dấu nghe kém hoặc nghiêm trọng chóng mặt được đánh giá bởi một chuyên gia về tai mũi họng càng sớm càng tốt.
 - Tiếng Anh: Vestibular neurectomy (an intracranial procedure) relieves vertigo in about 95% of patients and usually preserves hearing.
@@ -31,8 +27,13 @@ The patient presented with persistent vertigo and hearing loss. Upon examination
   Nghĩa: Tình trạng này có thể là kết quả của viêm dây thần kinh tiền đình, đau nửa đầu kèm theo chóng mặt, bệnh Meniere, chấn thương đầu hoặc sau phẫu thuật tai trong.
 - Tiếng Anh: Diagnosis of Meniere Disease Clinical evaluation Audiogram and gadolinium-enhanced MRI to rule out other causes The diagnosis of Meniere disease is made clinically.
   Nghĩa: Chẩn đoán Bệnh Meniere Đánh giá lâm sàng Thính lực đồ và MRI tiêm đối quang từ để loại trừ các nguyên nhân khác Chẩn đoán bệnh Meniere được dựa vào lâm sàng.
+- Tiếng Anh: Inner ear disorders include Benign paroxysmal positional vertigo Drug-induced ototoxicity Herpes zoster oticus Meniere disease Purulent labyrinthitis Vestibular neuronitis Vestibular schwannoma Inside the Ear
+  Nghĩa: Các rối loạn tai trong bao gồm Chóng mặt kịch phát tư thế lành tính Ngộ độc tai trong do thuốc Zona tai Bệnh Meniere Viêm mê nhĩ mủ Viêm dây thần kinh tiền đình u xơ thần kinh tiền đình Bên trong tai
+- Tiếng Anh: The injection can be repeated in 4 weeks if vertigo persists without hearing loss.
+  Nghĩa: Tiêm có thể được lặp lại trong 4 tuần nếu chóng mặt vẫn tồn tại mà không có nghe kém.
 
 [THUẬT NGỮ CẦN LƯU Ý (GLOSSARY)]
+- 'Ménière s disease': Bệnh Ménière (Lĩnh vực: medical_glossary)
 
 ```
 
@@ -62,12 +63,8 @@ Bạn sẽ nhận được các thông tin sau:
   Nghĩa: Nghe kém một bên dao động kèm theo đầy tai, ù tai và chóng mặt cũng gợi ý hội chứng Meniere.
 - Tiếng Anh: Key Points Meniere disease typically causes vertigo with nausea and vomiting, unilateral tinnitus, and chronic, progressive hearing loss.
   Nghĩa: Những điểm chính Bệnh Meniere thường gây chóng mặt với buồn nôn và nôn ói, ù tai một bên, và nghe kém tiến triển.
-- Tiếng Anh: Meniere Disease (Meniere's Disease; Endolymphatic Hydrops) By Mickie Hamiter, MD, New York Presbyterian Columbia Reviewed / Revised May 2023 View Patient Education Symptoms and Signs Diagnosis Treatment Key Points Meniere disease is an inner ear disorder that causes vertigo, nausea, fluctuating sensorineural hearing loss, and tinnitus.
-  Nghĩa: Bệnh Meniere (Bệnh Meniere, sũng nước mê nhĩ) Theo Lawrence R. Lustig, MD, Columbia University Medical Center and New York Presbyterian Hospital Đánh giá về mặt y tế Thg6 2021 | đã sửa đổi Thg9 2022 Triệu chứng và Dấu hiệu Chẩn đoán Điều trị Những điểm chính Bệnh Meniere là rối loạn tai trong gây ra chóng mặt, mất thính giác về nghe kém tiếp nhận dao động và ù tai.
 - Tiếng Anh: Symptoms and Signs of Meniere Disease Patients with Meniere disease have sudden attacks of vertigo that usually last for 20 minutes to 12 hours; rarely, the attacks last up to 24 hours.
   Nghĩa: Triệu chứng và dấu hiệu của bệnh Meniere Bệnh nhân có các cơn chóng mặt thường kéo dài từ 1 đến 6 giờ, nhưng có thể (ít) kéo dài đến 24 giờ, thường là buồn nôn và nôn.
-- Tiếng Anh: Patients with symptoms suggesting Meniere disease should have an and an MRI (with gadolinium enhancement) of the central nervous system with attention to the internal auditory canals to exclude other causes.
-  Nghĩa: Bệnh nhân có triệu chứng gợi ý bệnh Meniere nên đo thính lực đồ và chụp MRI (có tiêm đối quang từ) của nội sọ với sự chú ý đến các tai trong để loại trừ các nguyên nhân khác.
 - Tiếng Anh: Patients with marked hearing loss or severe vertigo are evaluated by an otolaryngologist as soon as possible.
   Nghĩa: Bệnh nhân có dấu nghe kém hoặc nghiêm trọng chóng mặt được đánh giá bởi một chuyên gia về tai mũi họng càng sớm càng tốt.
 - Tiếng Anh: Vestibular neurectomy (an intracranial procedure) relieves vertigo in about 95% of patients and usually preserves hearing.
@@ -78,8 +75,13 @@ Bạn sẽ nhận được các thông tin sau:
   Nghĩa: Tình trạng này có thể là kết quả của viêm dây thần kinh tiền đình, đau nửa đầu kèm theo chóng mặt, bệnh Meniere, chấn thương đầu hoặc sau phẫu thuật tai trong.
 - Tiếng Anh: Diagnosis of Meniere Disease Clinical evaluation Audiogram and gadolinium-enhanced MRI to rule out other causes The diagnosis of Meniere disease is made clinically.
   Nghĩa: Chẩn đoán Bệnh Meniere Đánh giá lâm sàng Thính lực đồ và MRI tiêm đối quang từ để loại trừ các nguyên nhân khác Chẩn đoán bệnh Meniere được dựa vào lâm sàng.
+- Tiếng Anh: Inner ear disorders include Benign paroxysmal positional vertigo Drug-induced ototoxicity Herpes zoster oticus Meniere disease Purulent labyrinthitis Vestibular neuronitis Vestibular schwannoma Inside the Ear
+  Nghĩa: Các rối loạn tai trong bao gồm Chóng mặt kịch phát tư thế lành tính Ngộ độc tai trong do thuốc Zona tai Bệnh Meniere Viêm mê nhĩ mủ Viêm dây thần kinh tiền đình u xơ thần kinh tiền đình Bên trong tai
+- Tiếng Anh: The injection can be repeated in 4 weeks if vertigo persists without hearing loss.
+  Nghĩa: Tiêm có thể được lặp lại trong 4 tuần nếu chóng mặt vẫn tồn tại mà không có nghe kém.
 
 [THUẬT NGỮ CẦN LƯU Ý (GLOSSARY)]
+- 'Ménière s disease': Bệnh Ménière (Lĩnh vực: medical_glossary)
 
 * Văn bản nguồn: The patient presented with persistent vertigo and hearing loss. Upon examination, a diagnosis of Meniere's disease was suspected, and an intratympanic steroid injection was recommended to alleviate the symptoms.
 * Ngôn ngữ nguồn: English
@@ -112,12 +114,8 @@ Bạn sẽ nhận được các thông tin sau:
   Nghĩa: Nghe kém một bên dao động kèm theo đầy tai, ù tai và chóng mặt cũng gợi ý hội chứng Meniere.
 - Tiếng Anh: Key Points Meniere disease typically causes vertigo with nausea and vomiting, unilateral tinnitus, and chronic, progressive hearing loss.
   Nghĩa: Những điểm chính Bệnh Meniere thường gây chóng mặt với buồn nôn và nôn ói, ù tai một bên, và nghe kém tiến triển.
-- Tiếng Anh: Meniere Disease (Meniere's Disease; Endolymphatic Hydrops) By Mickie Hamiter, MD, New York Presbyterian Columbia Reviewed / Revised May 2023 View Patient Education Symptoms and Signs Diagnosis Treatment Key Points Meniere disease is an inner ear disorder that causes vertigo, nausea, fluctuating sensorineural hearing loss, and tinnitus.
-  Nghĩa: Bệnh Meniere (Bệnh Meniere, sũng nước mê nhĩ) Theo Lawrence R. Lustig, MD, Columbia University Medical Center and New York Presbyterian Hospital Đánh giá về mặt y tế Thg6 2021 | đã sửa đổi Thg9 2022 Triệu chứng và Dấu hiệu Chẩn đoán Điều trị Những điểm chính Bệnh Meniere là rối loạn tai trong gây ra chóng mặt, mất thính giác về nghe kém tiếp nhận dao động và ù tai.
 - Tiếng Anh: Symptoms and Signs of Meniere Disease Patients with Meniere disease have sudden attacks of vertigo that usually last for 20 minutes to 12 hours; rarely, the attacks last up to 24 hours.
   Nghĩa: Triệu chứng và dấu hiệu của bệnh Meniere Bệnh nhân có các cơn chóng mặt thường kéo dài từ 1 đến 6 giờ, nhưng có thể (ít) kéo dài đến 24 giờ, thường là buồn nôn và nôn.
-- Tiếng Anh: Patients with symptoms suggesting Meniere disease should have an and an MRI (with gadolinium enhancement) of the central nervous system with attention to the internal auditory canals to exclude other causes.
-  Nghĩa: Bệnh nhân có triệu chứng gợi ý bệnh Meniere nên đo thính lực đồ và chụp MRI (có tiêm đối quang từ) của nội sọ với sự chú ý đến các tai trong để loại trừ các nguyên nhân khác.
 - Tiếng Anh: Patients with marked hearing loss or severe vertigo are evaluated by an otolaryngologist as soon as possible.
   Nghĩa: Bệnh nhân có dấu nghe kém hoặc nghiêm trọng chóng mặt được đánh giá bởi một chuyên gia về tai mũi họng càng sớm càng tốt.
 - Tiếng Anh: Vestibular neurectomy (an intracranial procedure) relieves vertigo in about 95% of patients and usually preserves hearing.
@@ -128,8 +126,13 @@ Bạn sẽ nhận được các thông tin sau:
   Nghĩa: Tình trạng này có thể là kết quả của viêm dây thần kinh tiền đình, đau nửa đầu kèm theo chóng mặt, bệnh Meniere, chấn thương đầu hoặc sau phẫu thuật tai trong.
 - Tiếng Anh: Diagnosis of Meniere Disease Clinical evaluation Audiogram and gadolinium-enhanced MRI to rule out other causes The diagnosis of Meniere disease is made clinically.
   Nghĩa: Chẩn đoán Bệnh Meniere Đánh giá lâm sàng Thính lực đồ và MRI tiêm đối quang từ để loại trừ các nguyên nhân khác Chẩn đoán bệnh Meniere được dựa vào lâm sàng.
+- Tiếng Anh: Inner ear disorders include Benign paroxysmal positional vertigo Drug-induced ototoxicity Herpes zoster oticus Meniere disease Purulent labyrinthitis Vestibular neuronitis Vestibular schwannoma Inside the Ear
+  Nghĩa: Các rối loạn tai trong bao gồm Chóng mặt kịch phát tư thế lành tính Ngộ độc tai trong do thuốc Zona tai Bệnh Meniere Viêm mê nhĩ mủ Viêm dây thần kinh tiền đình u xơ thần kinh tiền đình Bên trong tai
+- Tiếng Anh: The injection can be repeated in 4 weeks if vertigo persists without hearing loss.
+  Nghĩa: Tiêm có thể được lặp lại trong 4 tuần nếu chóng mặt vẫn tồn tại mà không có nghe kém.
 
 [THUẬT NGỮ CẦN LƯU Ý (GLOSSARY)]
+- 'Ménière s disease': Bệnh Ménière (Lĩnh vực: medical_glossary)
  để:
   * Làm rõ nghĩa
   * Đảm bảo tính nhất quán
@@ -214,4 +217,4 @@ Dịch câu này: The patient presented with persistent vertigo and hearing loss
 ## 4. 📤 KẾT QUẢ ĐẦU RA (AI TRANSLATION)
 **Dịch sang tiếng Việt**:
 
-> Bệnh nhân có triệu chứng chóng mặt và nghe kém kéo dài. Sau khi khám, chẩn đoán nghi ngờ hội chứng Meniere, và được tiêm thuốc steroid vào tai giữa để giảm triệu chứng.
+> Bệnh nhân có triệu chứng chóng mặt và nghe kém kéo dài. Sau khi khám, chẩn đoán nghi ngờ hội chứng Meniere và được chỉ định tiêm steroid vào tai giữa để giảm triệu chứng.
