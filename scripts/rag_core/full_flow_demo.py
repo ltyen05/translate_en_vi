@@ -8,67 +8,82 @@ project_root = os.path.abspath(os.path.join(current_dir, "../../"))
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-from prompt_config import get_context_prompt, format_qwen_prompt
+from prompt_config import get_context_prompt, format_qwen_prompt, check_semantic_cache, add_to_cache
 from scripts.rag_core.llm_engine_manual import LocalFileModelConnector
 
-def run_full_flow_demo():
-    # 1. Cấu hình đường dẫn mô hình
+def run_long_text_demo():
     model_path = os.path.join(project_root, "outputs", "completed_model_mlx")
-    log_file = os.path.join(project_root, "demo_flow_log.md")
+    log_file = os.path.join(project_root, "demo_long_text_log.md")
     
-    print(f"=== ĐANG CHẠY FULL FLOW DEMO (LOG: {log_file}) ===")
+    print(f"=== ĐANG CHẠY DEMO VĂN BẢN DÀI (LOG: {log_file}) ===")
     
-    # 2. Khởi tạo Engine
     engine = LocalFileModelConnector(model_path=model_path)
     
-    # 3. Input người dùng (Dài và chuyên môn cao)
-    user_input = (
-        "Ménière's disease represents a sophisticated and often debilitating chronic condition of the inner ear that "
-        "manifests through a complex array of physiological disturbances primarily impacting both auditory perception "
-        "and vestibular equilibrium in affected individuals. This pathological state is clinically recognized by "
-        "recurrent, unpredictable episodes of intense rotational vertigo, which are frequently accompanied by "
-        "significant nausea and vomiting, alongside fluctuating sensorineural hearing loss that may eventually "
-        "progress to permanent impairment over time. Furthermore, patients often experience distressing tinnitus, "
-        "characterized by a persistent ringing or roaring sound, combined with a profound sense of aural pressure "
-        "or fullness within the affected ear, all of which contribute to a substantial reduction in the patient's "
-        "overall functional capacity and quality of life. While the precise underlying etiology of Ménière's disease "
-        "remains elusive to modern medical science, contemporary research suggests that the condition is inherently "
-        "linked to an abnormal accumulation of endolymphatic fluid within the labyrinthine compartments of the "
-        "inner ear, a phenomenon commonly referred to as endolymphatic hydrops. This mechanical distension is "
-        "thought to interfere with the critical transduction of acoustic and balance signals between the peripheral "
-        "sensory organs and the central nervous system, thereby triggering the hallmark symptomatic manifestations of the disorder."
+    # Một đoạn văn bản y khoa rất dài về rung tâm nhĩ (Atrial Fibrillation)
+    long_input = (
+        "Atrial fibrillation (AF or A-fib) is a quivering or irregular heartbeat (arrhythmia) that can lead to blood clots, "
+        "stroke, heart failure and other heart-related complications. A normal heart beats at a steady rhythm, but in "
+        "atrial fibrillation, the upper chambers of the heart (the atria) beat irregularly and out of sync with the "
+        "lower chambers (the ventricles). For many people, A-fib may have no symptoms. However, A-fib may cause a fast, "
+        "pounding heartbeat, shortness of breath or weakness. Episodes of atrial fibrillation can come and go, or you "
+        "may develop atrial fibrillation that doesn't go away and may require treatment. Although atrial fibrillation "
+        "itself usually isn't life-threatening, it is a serious medical condition that requires proper treatment to "
+        "prevent stroke. Treatment for atrial fibrillation may include medications, medical procedures and lifestyle "
+        "changes to alter the heart's electrical system. The risk of atrial fibrillation increases with age and "
+        "is more common in people with high blood pressure, obesity, and underlying heart disease. Early detection "
+        "and management are crucial for reducing long-term morbidity and mortality. In addition to medical management, "
+        "patients are often advised to monitor their symptoms closely and engage in heart-healthy behaviors, such as "
+        "maintaining a balanced diet, exercising regularly, and avoiding excessive alcohol and caffeine consumption. "
+        "Advancements in medical technology, including catheter ablation and minimally invasive surgical techniques, "
+        "have provided more options for patients who do not respond well to traditional pharmacological therapies. "
+        "The primary goal of these interventions is to restore a normal heart rhythm and alleviate the persistent "
+        "symptoms that can significantly impair a patient's functional status and overall well-being. Ongoing clinical "
+        "trials and research continue to explore the genetic and molecular underpinnings of atrial fibrillation, "
+        "aiming to develop more targeted and effective therapeutic strategies for this prevalent cardiac disorder."
     )
-    
-    # 4. Bước RAG
-    print("-> Bước 1: Đang truy xuất ngữ cảnh (RAG)...")
-    context = get_context_prompt(user_input, domain="medical")
-    
-    # 5. Bước Prompt
-    print("-> Bước 2: Đang đóng gói Prompt...")
-    full_prompt = format_qwen_prompt(user_input, context)
-    
-    # 6. Bước LLM
-    print("-> Bước 3: Đang gửi tới mô hình MLX (5GB)...")
-    start_time = time.time()
-    translation = engine.generate(full_prompt)
-    end_time = time.time()
-    
-    # 7. Xuất ra file log
-    with open(log_file, "w", encoding="utf-8") as f:
-        f.write("# 📋 NHẬT KÝ LUỒNG DỊCH THUẬT RAG (FULL FLOW)\n\n")
-        f.write(f"**Thời gian thực hiện**: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
-        f.write(f"**Thời gian xử lý AI**: {end_time - start_time:.2f} giây\n\n")
-        f.write("## 1. 📥 ĐẦU VÀO (USER INPUT)\n")
-        f.write(f"```text\n{user_input}\n```\n\n")
-        f.write("## 2. 🔍 NGỮ CẢNH TRUY XUẤT (RAG CONTEXT)\n")
-        f.write(f"```text\n{context}\n```\n\n")
-        f.write("## 3. 🧠 PROMPT CUỐI CÙNG (FINAL PROMPT TO AI)\n")
-        f.write(f"```text\n{full_prompt}\n```\n\n")
-        f.write("## 4. 📤 KẾT QUẢ ĐẦU RA (AI TRANSLATION)\n")
-        f.write(f"**Dịch sang tiếng Việt**:\n\n")
-        f.write(f"> {translation}\n")
 
-    print(f"\n✅ ĐÃ XONG! Mời anh mở file '{log_file}' để xem chi tiết.")
+    print("\n--- [LẦN 1] CHẠY MỚI (KHÔNG CÓ CACHE) ---")
+    start_1 = time.time()
+    
+    # 1. RAG
+    print("-> Đang truy xuất RAG...")
+    context = get_context_prompt(long_input, domain="medical")
+    
+    # 2. LLM
+    full_prompt = format_qwen_prompt(long_input, context)
+    print("-> Đang giải mã văn bản dài (Streaming)...")
+    translation_1 = engine.generate(full_prompt, stream=True)
+    add_to_cache(long_input, translation_1)
+    
+    end_1 = time.time()
+    time_1 = end_1 - start_1
+
+    print("\n--- [LẦN 2] CHẠY LẠI (DÙNG CACHE) ---")
+    start_2 = time.time()
+    
+    # Kiểm tra cache
+    translation_2 = check_semantic_cache(long_input)
+    is_cached = translation_2 is not None
+    
+    end_2 = time.time()
+    time_2 = end_2 - start_2
+
+    # Ghi log
+    with open(log_file, "w", encoding="utf-8") as f:
+        f.write("# 📑 BÁO CÁO HIỆU NĂNG VỚI VĂN BẢN DÀI\n\n")
+        f.write(f"- **Độ dài văn bản**: {len(long_input.split())} từ\n\n")
+        
+        f.write("### ❌ LẦN 1: KHÔNG CACHE\n")
+        f.write(f"- **Thời gian**: {time_1:.2f} giây\n")
+        f.write(f"- **Kết quả**: {translation_1}\n\n")
+        
+        f.write("### ✅ LẦN 2: CÓ CACHE ⚡\n")
+        f.write(f"- **Thời gian**: {time_2:.4f} giây\n")
+        f.write(f"- **Kết quả**: {translation_2}\n\n")
+        
+        f.write(f"**=> TỐC ĐỘ TĂNG GẤP: {time_1 / time_2:.0f} LẦN!**\n")
+
+    print(f"\n✅ ĐÃ XONG! Mời xem log tại '{log_file}'.")
 
 if __name__ == "__main__":
-    run_full_flow_demo()
+    run_long_text_demo()

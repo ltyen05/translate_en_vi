@@ -58,7 +58,7 @@ class LocalFileModelConnector(TranslationEngine):
         except Exception as e:
             print(f"❌ Lỗi khi nạp mô hình: {e}")
 
-    def generate(self, prompt: str) -> str:
+    def generate(self, prompt: str, stream: bool = False) -> str:
         if not self.model:
             return "[LỖI] Mô hình chưa được nạp. Hãy kiểm tra đường dẫn."
         
@@ -66,9 +66,20 @@ class LocalFileModelConnector(TranslationEngine):
         is_mlx = "mlx" in str(type(self.model)).lower()
         
         if is_mlx:
-            from mlx_lm import generate
-            # MLX-LM trả về trực tiếp text
-            return generate(self.model, self.tokenizer, prompt=prompt, max_tokens=512, verbose=False)
+            from mlx_lm import generate, stream_generate
+            if stream:
+                # Streaming mode using stream_generate
+                full_response = ""
+                # Bỏ temperature vì API bản này dùng sampler
+                for response in stream_generate(self.model, self.tokenizer, prompt=prompt, max_tokens=512):
+                    s = response.text
+                    print(s, end="", flush=True)
+                    full_response += s
+                print() # Newline after stream
+                return full_response
+            else:
+                # Normal mode
+                return generate(self.model, self.tokenizer, prompt=prompt, max_tokens=512, temp=0.0, verbose=False)
         else:
             # 2. Fallback cho Transformers (Nếu người dùng không dùng bản MLX)
             import torch
@@ -77,8 +88,8 @@ class LocalFileModelConnector(TranslationEngine):
                 outputs = self.model.generate(
                     **inputs, 
                     max_new_tokens=512, 
-                    temperature=0.7,
-                    do_sample=True,
+                    temperature=0.0, # Deterministic
+                    do_sample=False,
                     repetition_penalty=1.1
                 )
             # Chỉ lấy phần nội dung mới generated

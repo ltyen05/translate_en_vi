@@ -5,11 +5,10 @@ from chromadb.utils import embedding_functions
 
 # --- Configuration ---
 DB_PATH = "./VectorDB_Gemini"
-COLLECTION_NAME = "multi_domain_rag_kb"
 BATCH_SIZE = 2000
 CHECKPOINT_FILE = "scripts/rag_core/index_checkpoint.json"
 
-# Mapping of domain folders to their primary glossary files
+# Mapping of domain folders to their primary files
 DOMAINS = {
     "medical_glossary": "data/medical/medical_glossary.json",
     "economic_glossary": "data/economic/economic_glossary.json",
@@ -18,6 +17,13 @@ DOMAINS = {
     "medical_context": "data/medical/medical_context.json",
     "economic_context": "data/economic/economic_context.json"
 }
+
+def get_collection_name(domain_key):
+    """Xác định tên Collection dựa trên khóa domain."""
+    if "medical" in domain_key: return "medical_kb"
+    if "economic" in domain_key: return "economic_kb"
+    if "technical" in domain_key: return "technical_kb"
+    return "general_kb"
 
 def save_checkpoint(domain, index):
     with open(CHECKPOINT_FILE, "w") as f:
@@ -65,10 +71,13 @@ def run_indexing():
     client = chromadb.PersistentClient(path=DB_PATH)
     local_ef = embedding_functions.DefaultEmbeddingFunction()
     
-    collection = client.get_or_create_collection(
-        name=COLLECTION_NAME,
-        embedding_function=local_ef
-    )
+    # 2. Tạo sẵn các collection theo lĩnh vực
+    collections = {
+        "medical_kb": client.get_or_create_collection(name="medical_kb", embedding_function=local_ef),
+        "economic_kb": client.get_or_create_collection(name="economic_kb", embedding_function=local_ef),
+        "technical_kb": client.get_or_create_collection(name="technical_kb", embedding_function=local_ef),
+        "general_kb": client.get_or_create_collection(name="general_kb", embedding_function=local_ef)
+    }
     
     checkpoint = load_checkpoint()
     resume_domain = checkpoint.get("domain")
@@ -80,23 +89,26 @@ def run_indexing():
     total_indexed = 0
     found_resume_point = (resume_domain is None)
     
-    # 2. Process each domain
-    for domain, file_path in DOMAINS.items():
+    # 3. Process each domain
+    for domain_key, file_path in DOMAINS.items():
         if not found_resume_point:
-            if domain == resume_domain:
+            if domain_key == resume_domain:
                 found_resume_point = True
             else:
-                print(f"Skipping domain: {domain.upper()} (Already processed)")
+                print(f"Skipping domain: {domain_key.upper()} (Already processed)")
                 continue
 
-        print(f"\nProcessing domain: {domain.upper()}...")
+        target_collection_name = get_collection_name(domain_key)
+        collection = collections[target_collection_name]
+        
+        print(f"\nProcessing domain: {domain_key.upper()} -> Collection: {target_collection_name}")
         items = load_data(file_path)
         if not items:
             continue
             
         print(f"Found {len(items)} items. Starting embedding...")
         
-        # 3. Preparation
+        # 4. Preparation
         documents = []
         metadatas = []
         ids = []
@@ -105,12 +117,12 @@ def run_indexing():
             documents.append(item["en"])
             metadatas.append({
                 "vi": item["vi"],
-                "domain": domain
+                "domain": domain_key
             })
-            ids.append(f"{domain}_{idx}")
+            ids.append(f"{domain_key}_{idx}")
             
-        # 4. Batch Upsert with Resuming within Domain
-        start_idx = resume_index if domain == resume_domain else 0
+        # 5. Batch Upsert with Resuming within Domain
+        start_idx = resume_index if domain_key == resume_domain else 0
         resume_index = 0 # Reset for next domains
         
         for i in range(start_idx, len(documents), BATCH_SIZE):
@@ -120,8 +132,8 @@ def run_indexing():
                 metadatas=metadatas[i:end],
                 ids=ids[i:end]
             )
-            print(f"  > [{domain}] Progress: {end}/{len(documents)}")
-            save_checkpoint(domain, end)
+            print(f"  > [{domain_key}] Progress: {end}/{len(documents)}")
+            save_checkpoint(domain_key, end)
         
         total_indexed += len(items)
         

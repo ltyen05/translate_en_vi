@@ -4,135 +4,26 @@ import re
 import unicodedata
 from sentence_transformers import CrossEncoder
 
-# 1. System Prompt Template
-system_prompt = """Bạn là một hệ thống dịch đa ngôn ngữ cấp chuyên gia, được tối ưu cho dịch theo ngữ cảnh (context-aware) và theo lĩnh vực (domain-aware) sử dụng Retrieval-Augmented Generation (RAG).
+# 1. System Prompt Template (Tối ưu hóa: Loại bỏ lặp lại văn bản nguồn)
+system_prompt = """Bạn là chuyên gia dịch thuật đa ngôn ngữ (RAG-based).
+MỤC TIÊU: Dịch chính xác, đúng chuyên ngành, tự nhiên.
 
----
+[ĐẦU VÀO]
+- Lĩnh vực: {domain}
+- Từ điển (Glossary): {terminology}
+- Ngữ cảnh (Context): {context}
+- Yêu cầu: Dịch từ {source_lang} sang {target_lang}
 
-## MỤC TIÊU
-
-Dịch văn bản đầu vào một cách chính xác, đảm bảo:
-* Đúng thuật ngữ chuyên ngành
-* Phù hợp ngữ cảnh
-* Tự nhiên trong ngôn ngữ đích
-
----
-
-## CẤU TRÚC ĐẦU VÀO
-
-Bạn sẽ nhận được các thông tin sau:
-* Lĩnh vực: {domain}
-* Từ điển thuật ngữ: {terminology}
-* Ngữ cảnh truy xuất (RAG): {context}
-* Văn bản nguồn: {source_text}
-* Ngôn ngữ nguồn: {source_lang}
-* Ngôn ngữ đích: {target_lang}
-
----
-
-## NGUYÊN TẮC CỐT LÕI
-
-### 1. ƯU TIÊN LĨNH VỰC (CAO NHẤT)
-* Luôn ưu tiên nghĩa theo lĩnh vực hơn nghĩa thông thường
-* Nếu một thuật ngữ có trong từ điển → BẮT BUỘC dùng chính xác
-* Không được đơn giản hóa hoặc thay đổi thuật ngữ chuyên ngành
-
----
-
-### 2. TUÂN THỦ THUẬT NGỮ
-* Phải sử dụng đúng từ điển thuật ngữ đã cung cấp
-* Nếu có nhiều nghĩa:
-  1. Ưu tiên theo lĩnh vực
-  2. Sau đó theo ngữ cảnh
-  3. Cuối cùng mới đến nghĩa phổ thông
-* Không tự tạo thuật ngữ mới
-
----
-
-### 3. SỬ DỤNG NGỮ CẢNH (RAG)
-* Dùng {context} để:
-  * Làm rõ nghĩa
-  * Đảm bảo tính nhất quán
-* Nếu ngữ cảnh mâu thuẫn với kiến thức chung → ưu tiên ngữ cảnh
-
----
-
-### 4. CHẤT LƯỢNG BẢN DỊCH
-* Bản dịch phải:
-  * Đúng nghĩa
-  * Tự nhiên, trôi chảy
-  * Đúng ngữ pháp
-* Giữ nguyên tone (technical / formal / neutral)
-
----
-
-### 5. GIỮ NGUYÊN CẤU TRÚC
-* Bảo toàn:
-  * Format (markdown, bullet, code…)
-  * Số, đơn vị, ký hiệu
-* Không thay đổi cấu trúc trừ khi cần thiết
-
----
-
-### 6. XỬ LÝ MƠ HỒ
-Nếu câu hoặc từ mơ hồ:
-* Ưu tiên dùng context
-* Sau đó dùng domain
-* Nếu vẫn chưa rõ:
-  * Chọn nghĩa hợp lý nhất theo lĩnh vực
-  * Không hỏi lại
-  * Không suy diễn thêm
-
----
-
-### 7. NGĂN NGỪA LỖI
-KHÔNG được:
-* Bịa nội dung
-* Thêm giải thích
-* Dịch từng từ nếu làm sai nghĩa
-* Bỏ qua cách diễn đạt chuyên ngành
-
----
-
-### 8. CHIẾN LƯỢC FALLBACK
-* Thiếu terminology → suy luận theo domain + context
-* Thiếu context → dựa vào domain
-* Thiếu cả hai → dịch trung tính nhưng chính xác
-
----
-
-### 9. RÀNG BUỘC OUTPUT
-* Chỉ trả về bản dịch
-* Không giải thích
-* Không thêm tiền tố như "Bản dịch:"
-
----
-
-## GỢI Ý LĨNH VỰC (DEFAULT)
-
-* IT: ưu tiên chính xác kỹ thuật (API, model, pipeline…)
-* Y tế: ưu tiên chính xác lâm sàng
-* Pháp lý: ưu tiên formal và chặt chẽ
-
----
-
-## KIỂM TRA CUỐI
-
-* Đúng thuật ngữ?
-* Đúng ngữ cảnh?
-* Đúng lĩnh vực?
-* Tự nhiên?
-
-Nếu đạt tất cả → xuất bản dịch.
+[NGUYÊN TẮC CỐT LÕI]
+1. TỪ ĐIỂN LÀ BẮT BUỘC: Nếu thuật ngữ có trong Glossary, PHẢI dùng chính xác.
+2. DÙNG NGỮ CẢNH RAG: Dùng Context để đảm bảo tính nhất quán.
+3. CHẤT LƯỢNG: Bản dịch tự nhiên, trôi chảy, giữ nguyên format.
+4. RÀNG BUỘC ĐẦU RA: CHỈ trả về văn bản dịch. KHÔNG giải thích.
 """
 
 # 2. Khởi tạo ChromaDB
 local_ef = embedding_functions.DefaultEmbeddingFunction()
 client = chromadb.PersistentClient(path="./VectorDB_Gemini")
-collection = client.get_or_create_collection(
-    name="multi_domain_rag_kb",
-    embedding_function=local_ef
-)
 
 # 3. Khởi tạo Reranker
 print("Loading Reranker model (ms-marco-MiniLM-L-6-v2) for multi-stage RAG...")
@@ -151,62 +42,110 @@ def normalize_text(text: str) -> str:
 def get_context_prompt(user_input, domain=None):
     """
     Truy xuất ngữ cảnh và thuật ngữ từ cơ sở tri thức (RAG).
-    Sử dụng tìm kiếm đa tầng và xếp hạng lại (Reranking).
+    Sử dụng tìm kiếm đa tầng, Threshold Reranker Bypass và xếp hạng lại.
     """
     # 0. Chuẩn bị đầu vào
     user_input_norm = normalize_text(user_input)
-    # Trích xuất từ khóa để tìm Glossary chính xác hơn
+    
+    # --- DYNAMIC CONTEXT RETRIEVAL ---
+    word_count = len(user_input.split())
+    if word_count < 30:
+        query_n_results = 5
+        max_context = 2
+    elif word_count <= 100:
+        query_n_results = 10
+        max_context = 5
+    else:
+        query_n_results = 15
+        max_context = 8
+        
     keywords = [w for w in re.split(r'\W+', user_input) if len(w) > 3]
     
-    domains_to_search = []
+    # --- DOMAIN ROUTING DỰA VÀO ĐẦU VÀO ---
+    target_collections = ["general_kb"] # Luôn kèm general fallback
     if domain:
-        if "_" in domain:
-            domains_to_search = [domain]
-        else:
-            domains_to_search = [f"{domain}_glossary", f"{domain}_context"]
-    
-    # 1. Truy xuất đa tầng (Multi-Query Retrieval)
-    # 1.1 Tìm Glossary
-    gloss_where = {"domain": {"$in": [d for d in domains_to_search if "glossary" in d]}} if domains_to_search else {"domain": {"$ne": ""}}
-    gloss_queries = [user_input] + keywords[:5]
-    gloss_results = collection.query(query_texts=gloss_queries, n_results=15, where=gloss_where)
+        if "medical" in domain.lower() or "y tế" in domain.lower(): target_collections.insert(0, "medical_kb")
+        elif "economic" in domain.lower() or "kinh tế" in domain.lower(): target_collections.insert(0, "economic_kb")
+        elif "technical" in domain.lower() or "công nghệ" in domain.lower(): target_collections.insert(0, "technical_kb")
+        else: 
+            # Nếu domain truyền vào không khớp 3 cái trên, quét tất cả
+            target_collections = ["medical_kb", "economic_kb", "technical_kb", "general_kb"]
 
-    # 1.2 Tìm Context
-    ctx_where = {"domain": {"$in": [d for d in domains_to_search if "context" in d]}} if domains_to_search else None
-    ctx_results = collection.query(query_texts=[user_input], n_results=30, where=ctx_where)
-
-    # Gộp kết quả và lọc trùng
+    # 1. Truy xuất ChromaDB
     all_docs = []
     all_metas = []
+    all_distances = []
     seen_ids = set()
 
-    for r in [gloss_results, ctx_results]:
-        if r.get("documents"):
-            for i in range(len(r["documents"])):
-                for j in range(len(r["documents"][i])):
-                    doc_id = r["ids"][i][j]
+    # Gộp từ khóa thành 1 chuỗi để giảm số lượng query
+    keyword_str = " ".join(keywords[:5])
+    queries = [user_input]
+    if keyword_str: 
+        queries.append(keyword_str)
+
+    for col_name in target_collections:
+        try:
+            col = client.get_collection(name=col_name, embedding_function=local_ef)
+        except Exception:
+            continue
+            
+        results = col.query(query_texts=queries, n_results=query_n_results)
+
+        if results.get("documents"):
+            for i in range(len(results["documents"])):
+                for j in range(len(results["documents"][i])):
+                    doc_id = results["ids"][i][j]
                     if doc_id not in seen_ids:
-                        all_docs.append(r["documents"][i][j])
-                        all_metas.append(r["metadatas"][i][j])
+                        all_docs.append(results["documents"][i][j])
+                        all_metas.append(results["metadatas"][i][j])
+                        all_distances.append(results["distances"][i][j])
                         seen_ids.add(doc_id)
 
     if not all_docs:
         return "Không có ngữ cảnh bổ trợ đặc biệt nào được tìm thấy."
 
-    # 2. Xếp hạng lại (Reranking)
-    hits = [[user_input, doc] for doc in all_docs]
-    scores = reranker.predict(hits)
+    # 2. Tiền xử lý Reranking / Bypass Reranker
+    pre_filtered = list(zip(all_docs, all_metas, all_distances))
+    pre_filtered.sort(key=lambda x: x[2]) # Sắp xếp theo L2 Distance (nhỏ nhất = tốt nhất)
+    top_candidates = pre_filtered[:25] # Cắt top 25
     
     reranked = []
-    for i in range(len(all_docs)):
-        reranked.append({
-            "text": all_docs[i],
-            "metadata": all_metas[i],
-            "score": scores[i]
-        })
-    # Sắp xếp theo điểm số giảm dần
-    reranked.sort(key=lambda x: x["score"], reverse=True)
-    top_results = reranked[:15] # Lấy top 15 sau khi xếp hạng
+    
+    # ChromaDB dùng All-MiniLM-L6-v2 (L2 distance). 
+    # Nếu distance < 0.6 => Cosine Similarity > 0.7. Distance < 0.4 => Similarity > 0.8
+    BYPASS_DISTANCE_THRESHOLD = 0.5 
+    
+    # Kiểm tra xem top 5 candidates đầu tiên có đủ tốt để bypass reranker không
+    is_bypass = False
+    if len(top_candidates) > 0:
+        top_5_distances = [dist for _, _, dist in top_candidates[:5]]
+        # Nếu trung bình khoảng cách top 5 < Threshold, thì bypass Reranker
+        if sum(top_5_distances) / len(top_5_distances) <= BYPASS_DISTANCE_THRESHOLD:
+            is_bypass = True
+
+    if is_bypass:
+        print("⚡ Bypassing Reranker (Vector Search confidence is high: >80%)")
+        for doc, meta, dist in top_candidates:
+            reranked.append({
+                "text": doc,
+                "metadata": meta,
+                "score": 1.0 - (dist / 2.0), # Quy đổi distance ra fake score để tái sử dụng code cũ
+                "is_bypass": True
+            })
+    else:
+        # Nếu chưa đủ tự tin, chạy CrossEncoder
+        hits = [[user_input, doc] for doc, meta, dist in top_candidates]
+        scores = reranker.predict(hits)
+        for i in range(len(top_candidates)):
+            doc, meta, dist = top_candidates[i]
+            reranked.append({
+                "text": doc,
+                "metadata": meta,
+                "score": scores[i],
+                "is_bypass": False
+            })
+        # Sắp xếp lại theo điểm số Reranker giảm dần
+        reranked.sort(key=lambda x: x["score"], reverse=True)
 
     # 3. Phân loại và tạo prompt
     tm_context = "[NGỮ CẢNH TRI THỨC (STRATEGIC CONTEXT)]\n"
@@ -214,38 +153,41 @@ def get_context_prompt(user_input, domain=None):
     found_tm = False
     found_glos = False
     
-    # Tập hợp tất cả ứng viên (không chỉ top 15) để tìm glossary chắc chắn hơn
-    # Glossary thường có điểm semantic thấp hơn câu dài nhưng độ chính xác khớp từ lại cao
-    all_candidates = []
+    # Nếu chạy CrossEncoder, threshold = 0.5. Nếu bypass (fake score), threshold = 0.75 (ứng với distance 0.5)
     seen_texts = set()
-    for item in reranked:
-        if item["text"] not in seen_texts:
-            all_candidates.append(item)
-            seen_texts.add(item["text"])
 
-    # Xử lý Glossary trước trên toàn bộ ứng viên
-    for item in all_candidates:
+    # Xử lý Glossary
+    for item in reranked:
         text = item["text"]
         meta = item["metadata"]
+        score = item["score"]
+        is_bypass = item["is_bypass"]
+        
         item_domain = str(meta.get("domain", "General"))
         vi = meta.get("vi", "N/A")
 
         is_glossary = "glossary" in item_domain.lower() or len(text.split()) <= 5
         
-        if is_glossary:
+        # Threshold lọc rác
+        threshold_met = (is_bypass and score >= 0.7) or (not is_bypass and score >= 0.5)
+        
+        if is_glossary and threshold_met:
             text_norm = normalize_text(text)
-            # Hỗ trợ cả trường hợp "meniere s" và "meniere"
-            pattern = r'\b' + re.escape(text_norm).replace('\ s', '\ ?s?') + r"(?: s)?\b"
+            pattern = r'\b' + re.escape(text_norm).replace('\\ ', ' ?s?') + r"(?: s)?\b"
             if re.search(pattern, user_input_norm):
-                # Chỉ thêm nếu chưa có trong glossary_context
                 term_entry = f"- '{text}': {vi} (Lĩnh vực: {item_domain})\n"
                 if term_entry not in glossary_context:
                     glossary_context += term_entry
                     found_glos = True
+                    seen_texts.add(text)
 
-    # Xử lý Context chỉ lấy Top 10 thực sự chất lượng
-    for item in reranked[:10]:
+    # Xử lý Context (Dynamic: max_context)
+    context_count = 0
+    for item in reranked:
+        if context_count >= max_context: break
         text = item["text"]
+        if text in seen_texts: continue
+        
         meta = item["metadata"]
         item_domain = str(meta.get("domain", "General"))
         vi = meta.get("vi", "N/A")
@@ -254,6 +196,8 @@ def get_context_prompt(user_input, domain=None):
         if not is_glossary:
             tm_context += f"- Tiếng Anh: {text}\n  Nghĩa: {vi}\n"
             found_tm = True
+            context_count += 1
+            seen_texts.add(text)
 
     final_prompt = ""
     if found_tm: final_prompt += tm_context + "\n"
@@ -262,13 +206,38 @@ def get_context_prompt(user_input, domain=None):
     return final_prompt if final_prompt else "Không tìm thấy thuật ngữ hay ngữ cảnh cụ thể."
 
 def format_qwen_prompt(user_input, context, domain="Đa lĩnh vực", terminology="Xem danh sách bên dưới", source_lang="English", target_lang="Vietnamese"):
-    """Định dạng prompt ChatML cho Qwen."""
+    """Định dạng prompt ChatML cho Qwen (Đã tối ưu token)."""
     system_content = system_prompt.format(
         domain=domain,
         terminology=terminology,
         context=context,
-        source_text=user_input,
         source_lang=source_lang,
         target_lang=target_lang
     )
-    return f"<|im_start|>system\n{system_content}<|im_end|>\n<|im_start|>user\nDịch câu này: {user_input}<|im_end|>\n<|im_start|>assistant\n"
+    return f"<|im_start|>system\n{system_content}<|im_end|>\n<|im_start|>user\nDịch đoạn văn này: {user_input}<|im_end|>\n<|im_start|>assistant\n"
+
+def check_semantic_cache(user_input, threshold=0.95):
+    """
+    Kiểm tra xem đã từng dịch câu này chưa (Sử dụng chính ChromaDB để cache).
+    """
+    try:
+        col = client.get_collection(name="translation_cache", embedding_function=local_ef)
+        results = col.query(query_texts=[user_input], n_results=1)
+        if results["distances"] and results["distances"][0] and results["distances"][0][0] < (1 - threshold):
+            return results["metadatas"][0][0]["translation"]
+    except Exception:
+        pass
+    return None
+
+def add_to_cache(user_input, translation):
+    """Lưu bản dịch vào cache."""
+    try:
+        col = client.get_or_create_collection(name="translation_cache", embedding_function=local_ef)
+        import uuid
+        col.add(
+            ids=[str(uuid.uuid4())],
+            documents=[user_input],
+            metadatas=[{"translation": translation}]
+        )
+    except Exception as e:
+        print(f"⚠️ Không thể lưu cache: {e}")
