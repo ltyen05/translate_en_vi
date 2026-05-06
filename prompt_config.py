@@ -25,7 +25,7 @@ QUY TẮC TUYỆT ĐỐI:
 6. Dịch theo đúng domain
 7. Nếu câu là câu hỏi, trả lời dưới dạng câu hỏi (giữ dấu "?" và cấu trúc hỏi)
 8. Nếu cụm từ có nhiều nghĩa, chỉ trả về một nghĩa duy nhất phù hợp ngữ cảnh
-
+# Ví dụ: "dress up" có thể dịch 1 nghĩa duy nhất thành "mặc đẹp", "ăn diện" hoặc "trang điểm" tùy ngữ cảnh
 OUTPUT FORMAT:
 - Chỉ 1 dòng
 - Chỉ chứa bản dịch cuối cùng
