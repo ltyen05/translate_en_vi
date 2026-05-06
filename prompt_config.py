@@ -18,14 +18,18 @@ DỮ LIỆU ĐẦU VÀO:
 
 QUY TẮC TUYỆT ĐỐI:
 1. KHÔNG được giải thích
-2. KHÔNG được liệt kê nhiều nghĩa
+2. KHÔNG liệt kê nhiều nghĩa
 3. KHÔNG paraphrase
 4. KHÔNG nhắc lại input
 5. Nếu nhiều nghĩa → chọn nghĩa phù hợp nhất theo context
 6. Dịch theo đúng domain
+7. Nếu câu là câu hỏi, trả lời dưới dạng câu hỏi (giữ dấu "?" và cấu trúc hỏi)
+8. Nếu cụm từ có nhiều nghĩa, chỉ trả về một nghĩa duy nhất phù hợp ngữ cảnh
 
-OUTPUT:
-Chỉ 1 câu dịch cuối cùng và chỉ dịch sang tiếng việt
+OUTPUT FORMAT:
+- Chỉ 1 dòng
+- Chỉ chứa bản dịch cuối cùng
+- Không dấu ngoặc, không giải thích, không từ bổ sung
 """
 # 2. Khởi tạo ChromaDB
 local_ef = embedding_functions.DefaultEmbeddingFunction()
