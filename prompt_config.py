@@ -5,22 +5,28 @@ import unicodedata
 from sentence_transformers import CrossEncoder
 
 # 1. System Prompt Template (Tối ưu hóa: Loại bỏ lặp lại văn bản nguồn)
-system_prompt = """Bạn là chuyên gia dịch thuật đa ngôn ngữ (RAG-based).
-MỤC TIÊU: Dịch chính xác, đúng chuyên ngành, tự nhiên.
+system_prompt = """Bạn là hệ thống dịch thuật chính xác (RAG Translator).
 
-[ĐẦU VÀO]
-- Lĩnh vực: {domain}
-- Từ điển (Glossary): {terminology}
-- Ngữ cảnh (Context): {context}
-- Yêu cầu: Dịch từ {source_lang} sang {target_lang}
+NHIỆM VỤ:
+- Dịch từ {source_lang} sang {target_lang}
+- Chỉ trả về 1 bản dịch cuối cùng
 
-[NGUYÊN TẮC CỐT LÕI]
-1. TỪ ĐIỂN LÀ BẮT BUỘC: Nếu thuật ngữ có trong Glossary, PHẢI dùng chính xác.
-2. DÙNG NGỮ CẢNH RAG: Dùng Context để đảm bảo tính nhất quán.
-3. CHẤT LƯỢNG: Bản dịch tự nhiên, trôi chảy, giữ nguyên format.
-4. RÀNG BUỘC ĐẦU RA: CHỈ trả về văn bản dịch. KHÔNG giải thích.
+DỮ LIỆU ĐẦU VÀO:
+- Domain: {domain}
+- Glossary: {terminology}
+- Context: {context}
+
+QUY TẮC TUYỆT ĐỐI:
+1. KHÔNG được giải thích
+2. KHÔNG được liệt kê nhiều nghĩa
+3. KHÔNG paraphrase
+4. KHÔNG nhắc lại input
+5. Nếu nhiều nghĩa → chọn nghĩa phù hợp nhất theo context
+6. Dịch theo đúng domain
+
+OUTPUT:
+Chỉ 1 câu dịch cuối cùng và chỉ dịch sang tiếng việt
 """
-
 # 2. Khởi tạo ChromaDB
 local_ef = embedding_functions.DefaultEmbeddingFunction()
 client = chromadb.PersistentClient(path="./VectorDB_Gemini")
@@ -64,6 +70,7 @@ def get_context_prompt(user_input, domain=None):
     # --- DOMAIN ROUTING DỰA VÀO ĐẦU VÀO ---
     target_collections = ["general_kb"] # Luôn kèm general fallback
     if domain:
+
         if "medical" in domain.lower() or "y tế" in domain.lower(): target_collections.insert(0, "medical_kb")
         elif "economic" in domain.lower() or "kinh tế" in domain.lower(): target_collections.insert(0, "economic_kb")
         elif "technical" in domain.lower() or "công nghệ" in domain.lower(): target_collections.insert(0, "technical_kb")
@@ -76,7 +83,7 @@ def get_context_prompt(user_input, domain=None):
     all_metas = []
     all_distances = []
     seen_ids = set()
-
+    seen_glossary = set()
     # Gộp từ khóa thành 1 chuỗi để giảm số lượng query
     keyword_str = " ".join(keywords[:5])
     queries = [user_input]
@@ -166,7 +173,10 @@ def get_context_prompt(user_input, domain=None):
         item_domain = str(meta.get("domain", "General"))
         vi = meta.get("vi", "N/A")
 
-        is_glossary = "glossary" in item_domain.lower() or len(text.split()) <= 5
+        is_glossary = (
+            "glossary" in item_domain.lower()
+            and len(text.split()) <= 4
+        )
         
         # Threshold lọc rác
         threshold_met = (is_bypass and score >= 0.7) or (not is_bypass and score >= 0.5)
@@ -175,7 +185,7 @@ def get_context_prompt(user_input, domain=None):
             text_norm = normalize_text(text)
             pattern = r'\b' + re.escape(text_norm).replace('\\ ', ' ?s?') + r"(?: s)?\b"
             if re.search(pattern, user_input_norm):
-                term_entry = f"- '{text}': {vi} (Lĩnh vực: {item_domain})\n"
+                term_entry = f"- {text} => {vi}\n"
                 if term_entry not in glossary_context:
                     glossary_context += term_entry
                     found_glos = True
@@ -187,7 +197,9 @@ def get_context_prompt(user_input, domain=None):
         if context_count >= max_context: break
         text = item["text"]
         if text in seen_texts: continue
-        
+        if text in seen_glossary: continue
+        seen_glossary.add(text)
+
         meta = item["metadata"]
         item_domain = str(meta.get("domain", "General"))
         vi = meta.get("vi", "N/A")
