@@ -70,23 +70,16 @@ NHIỆM VỤ CHÍNH:
 ## FAILURE POLICY:
 - Nếu input mơ hồ → chọn nghĩa hợp lý nhất theo context
 - Nếu có cụm từ thì dịch theo cụm từ
-- KHÔNG được hỏi lại người dùng
 - KHÔNG được trả nhiều phương án
 
 ---
 ## SINGLE SENSE RESOLUTION (QUAN TRỌNG NHẤT):
-- Nếu một cụm từ có nhiều nghĩa trong dữ liệu huấn luyện:
-  → PHẢI chọn đúng 1 nghĩa duy nhất
-  → PHẢI loại bỏ toàn bộ các nghĩa còn lại
-  → Không được nhắc đến sự tồn tại của các nghĩa khác
-
 - Cách chọn nghĩa:
-  1. Ưu tiên domain (nếu có)
-  2. Nếu không có domain rõ:
-     → chọn nghĩa phổ biến nhất trong ngữ cảnh tương tự trong dữ liệu huấn luyện
-  3. Nếu vẫn không rõ:
-     → chọn nghĩa NGẮN GỌN + PHỔ BIẾN NHẤT trong đời sống hàng ngày
-
+  1. Ưu tiên Nghĩa trong Glossary (nếu khớp 100%).
+  2. Ưu tiên Nghĩa theo Domain
+  3. Ưu tiên Nghĩa PHỔ BIẾN NHẤT trong đời sống (Common Sense). 
+   - Tuyệt đối không chọn nghĩa hiếm gặp, nghĩa bóng hoặc nghĩa chuyên ngành nếu đoạn văn thuộc domain 'General'.
+   - Ví dụ: Với các cụm từ đa nghĩa, luôn chọn nghĩa mà 90% người bản ngữ sẽ dùng trong ngữ cảnh thông thường.
 - TUYỆT ĐỐI CẤM:
   - liệt kê nhiều nghĩa
   - dùng từ “hoặc”, “có thể là”
@@ -107,12 +100,17 @@ print("Loading Reranker model (ms-marco-MiniLM-L-6-v2) for multi-stage RAG...")
 reranker = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
 
 def normalize_text(text: str) -> str:
-    """Loại bỏ dấu (accents) và chuẩn hóa ký tự để so khớp linh hoạt."""
-    if not text: return ""
+    if not text:
+        return ""
+    # Giữ nguyên logic cũ của bạn
     text = unicodedata.normalize('NFD', text.lower())
-    text = ''.join([c for c in text if unicodedata.category(c) != 'Mn'])
+    text = ''.join(c for c in text if unicodedata.category(c) != 'Mn')
     text = unicodedata.normalize('NFC', text)
-    # Thay ký tự đặc biệt bằng dấu cách
+    
+    # Xử lý đặc biệt: Loại bỏ các hậu tố phổ biến để tìm kiếm từ gốc (Simple Stemming)
+    # Giúp "involved" và "involve" khớp nhau hơn khi query
+    text = re.sub(r'(ed|ing|s)\b', '', text) 
+    
     text = re.sub(r'[^a-zA-Z0-9\s]', ' ', text)
     return ' '.join(text.split())
 
@@ -126,6 +124,9 @@ def get_context_prompt(user_input, domain=None):
     
     # --- DYNAMIC CONTEXT RETRIEVAL ---
     word_count = len(user_input.split())
+    word_len = len(text.split())
+    if word_len >= 2 and word_len <= 4:
+        score += 0.2
     if word_count < 30:
         query_n_results = 5
         max_context = 2
@@ -191,7 +192,7 @@ def get_context_prompt(user_input, domain=None):
     
     # ChromaDB dùng All-MiniLM-L6-v2 (L2 distance). 
     # Nếu distance < 0.6 => Cosine Similarity > 0.7. Distance < 0.4 => Similarity > 0.8
-    BYPASS_DISTANCE_THRESHOLD = 0.5 
+    BYPASS_DISTANCE_THRESHOLD = 0.4
     
     # Kiểm tra xem top 5 candidates đầu tiên có đủ tốt để bypass reranker không
     is_bypass = False
@@ -286,6 +287,12 @@ def get_context_prompt(user_input, domain=None):
     if found_glos: final_prompt += glossary_context
     
     return final_prompt if final_prompt else "Không tìm thấy thuật ngữ hay ngữ cảnh cụ thể."
+
+def find_exact_term(user_input_norm, glossary_collection):
+    # Lấy toàn bộ từ khóa trong Glossary (nếu không quá lớn) hoặc 
+    # dùng tính năng lọc metadata của ChromaDB
+    # Mục tiêu: Nếu user_input chứa "get involve", nó phải map trúng "get involved"
+    pass
 
 def format_qwen_prompt(user_input, context, domain="Đa lĩnh vực", terminology="Xem danh sách bên dưới", source_lang="English", target_lang="Vietnamese"):
     """Định dạng prompt ChatML cho Qwen (Đã tối ưu token)."""
