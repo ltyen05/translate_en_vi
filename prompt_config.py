@@ -35,6 +35,7 @@ NHIỆM VỤ CHÍNH:
    - ký hiệu kỹ thuật
 8. Nếu có nhiều nghĩa:
    - CHỈ chọn 1 nghĩa đúng nhất theo context
+# Nếu thuật ngữ "make up" trong domain y tế, luôn dịch thành "bù đắp"
 9. Nếu là câu hỏi:
    - giữ nguyên cấu trúc câu hỏi và dấu "?"
 
@@ -151,8 +152,8 @@ def get_context_prompt(user_input, domain=None):
     if domain:
 
         if "medical" in domain.lower() or "y tế" in domain.lower(): target_collections.insert(0, "medical_kb")
-        elif "economic" in domain.lower() or "kinh tế" in domain.lower(): target_collections.insert(0, "economic_kb")
-        elif "technical" in domain.lower() or "công nghệ" in domain.lower(): target_collections.insert(0, "technical_kb")
+        elif "finance" in domain.lower() or "kinh tế" in domain.lower(): target_collections.insert(0, "economic_kb")
+        elif "it" in domain.lower() or "công nghệ" in domain.lower(): target_collections.insert(0, "technical_kb")
         else: 
             # Nếu domain truyền vào không khớp 3 cái trên, quét tất cả
             target_collections = ["medical_kb", "economic_kb", "technical_kb", "general_kb"]
@@ -249,7 +250,7 @@ def get_context_prompt(user_input, domain=None):
         score = item["score"]
         is_bypass = item["is_bypass"]
         
-        item_domain = str(meta.get("domain", "General"))
+        item_domain = str(meta.get("domain", "general"))
         vi = meta.get("vietnamese", "N/A")
 
         is_glossary = (
@@ -280,8 +281,8 @@ def get_context_prompt(user_input, domain=None):
         seen_glossary.add(text)
 
         meta = item["metadata"]
-        item_domain = str(meta.get("domain", "General"))
-        vi = meta.get("vi", "N/A")
+        item_domain = str(meta.get("domain", "general"))
+        vi = meta.get("vietnamese", "N/A")
 
         is_glossary = "glossary" in item_domain.lower() or len(text.split()) <= 5
         if not is_glossary:
