@@ -124,7 +124,7 @@ def get_context_prompt(user_input, domain=None):
     
     # --- DYNAMIC CONTEXT RETRIEVAL ---
     word_count = len(user_input.split())
-    word_len = len(text.split())
+    word_len = len(user_input_norm.split())
     if word_len >= 2 and word_len <= 4:
         score += 0.2
     if word_count < 30:
