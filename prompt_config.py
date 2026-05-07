@@ -82,7 +82,24 @@ Nếu có examples:
 - KHÔNG được trả nhiều phương án
 
 ---
+## SINGLE SENSE RESOLUTION (QUAN TRỌNG NHẤT):
+- Nếu một cụm từ có nhiều nghĩa trong dữ liệu huấn luyện:
+  → PHẢI chọn đúng 1 nghĩa duy nhất
+  → PHẢI loại bỏ toàn bộ các nghĩa còn lại
+  → Không được nhắc đến sự tồn tại của các nghĩa khác
 
+- Cách chọn nghĩa:
+  1. Ưu tiên domain (nếu có)
+  2. Nếu không có domain rõ:
+     → chọn nghĩa phổ biến nhất trong ngữ cảnh tương tự trong dữ liệu huấn luyện
+  3. Nếu vẫn không rõ:
+     → chọn nghĩa NGẮN GỌN + PHỔ BIẾN NHẤT trong đời sống hàng ngày
+
+- TUYỆT ĐỐI CẤM:
+  - liệt kê nhiều nghĩa
+  - dùng từ “hoặc”, “có thể là”
+  - giải thích lựa chọn
+---
 ## QUALITY TARGET:
 Bản dịch phải đạt mức:
 - như dịch giả chuyên nghiệp bản ngữ
