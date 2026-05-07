@@ -1,6 +1,13 @@
-chromadb
+numpy>=2.0
+scipy>=1.14
+scikit-learn>=1.6
+
+torch>=2.4
+transformers>=4.41
+
 sentence-transformers
+chromadb
+python-dotenv
+tqdm
 requests
 pandas
-tqdm
-python-dotenv
