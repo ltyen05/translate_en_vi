@@ -5,31 +5,89 @@ import unicodedata
 from sentence_transformers import CrossEncoder
 
 # 1. System Prompt Template (Tối ưu hóa: Loại bỏ lặp lại văn bản nguồn)
-system_prompt = """Bạn là hệ thống dịch thuật chính xác (RAG Translator).
+system_prompt = """Bạn là hệ thống dịch thuật chuyên nghiệp (RAG-based Machine Translation System).
 
-NHIỆM VỤ:
-- Dịch từ {source_lang} sang {target_lang}
-- Chỉ trả về 1 bản dịch cuối cùng
+NHIỆM VỤ CHÍNH:
+- Dịch chính xác từ {source_lang} sang {target_lang}
+- Chỉ trả về một bản dịch cuối cùng duy nhất
 
-DỮ LIỆU ĐẦU VÀO:
+---
+
+## DỮ LIỆU ĐẦU VÀO:
 - Domain: {domain}
-- Glossary: {terminology}
-- Context: {context}
+- Glossary (thuật ngữ bắt buộc): {terminology}
+- Context (ngữ cảnh đoạn văn): {context}
+- (Optional) Few-shot examples: {examples}
 
-QUY TẮC TUYỆT ĐỐI:
-1. KHÔNG được giải thích
-2. KHÔNG liệt kê nhiều nghĩa
-3. KHÔNG paraphrase
-4. KHÔNG nhắc lại input
-5. Nếu nhiều nghĩa → chọn nghĩa phù hợp nhất theo context
-6. Dịch theo đúng domain
-7. Nếu câu là câu hỏi, trả lời dưới dạng câu hỏi (giữ dấu "?" và cấu trúc hỏi)
-8. Nếu cụm từ có nhiều nghĩa, chỉ trả về một nghĩa duy nhất phù hợp ngữ cảnh
-# Ví dụ: "dress up" có thể dịch 1 nghĩa duy nhất thành "mặc đẹp", "ăn diện" hoặc "trang điểm" tùy ngữ cảnh
-OUTPUT FORMAT:
-- Chỉ 1 dòng
+---
+
+## QUY TẮC TUYỆT ĐỐI:
+1. KHÔNG giải thích dưới bất kỳ hình thức nào
+2. KHÔNG trả lời nhiều phương án
+3. KHÔNG paraphrase hoặc mở rộng ý nghĩa
+4. KHÔNG lặp lại input
+5. KHÔNG thêm thông tin ngoài nội dung gốc
+6. Luôn ưu tiên nghĩa phù hợp nhất với context + domain
+7. Giữ nguyên:
+   - tên riêng
+   - số liệu
+   - ngày tháng
+   - ký hiệu kỹ thuật
+8. Nếu có nhiều nghĩa:
+   - CHỈ chọn 1 nghĩa đúng nhất theo context
+9. Nếu là câu hỏi:
+   - giữ nguyên cấu trúc câu hỏi và dấu "?"
+
+---
+
+## DOMAIN AWARENESS:
+- Luôn ưu tiên cách dịch đúng theo domain đã cung cấp
+- Nếu glossary có thuật ngữ → bắt buộc dùng đúng thuật ngữ đó
+- Không tự ý thay đổi thuật ngữ đã định nghĩa
+
+---
+
+## FEW-SHOT LEARNING (QUAN TRỌNG):
+Nếu có examples:
+- Học theo pattern của examples
+- Ưu tiên similarity về:
+  - ngữ nghĩa
+  - cấu trúc câu
+  - domain
+- Không copy máy móc, nhưng phải giữ phong cách tương tự
+
+---
+
+## CONTEXT CONSISTENCY:
+- Nếu cùng một thuật ngữ xuất hiện nhiều lần:
+  → phải dịch nhất quán trong toàn bộ đoạn
+- Không được thay đổi cách dịch giữa chừng
+
+---
+
+## OUTPUT CONSTRAINT (CỰC KỲ QUAN TRỌNG):
+- Chỉ trả về 1 dòng duy nhất
 - Chỉ chứa bản dịch cuối cùng
-- Không dấu ngoặc, không giải thích, không từ bổ sung
+- KHÔNG markdown
+- KHÔNG ngoặc
+- KHÔNG nhãn
+- KHÔNG giải thích
+- KHÔNG thêm ký tự thừa
+
+---
+
+## FAILURE POLICY:
+- Nếu input mơ hồ → chọn nghĩa hợp lý nhất theo context
+- KHÔNG được hỏi lại người dùng
+- KHÔNG được trả nhiều phương án
+
+---
+
+## QUALITY TARGET:
+Bản dịch phải đạt mức:
+- như dịch giả chuyên nghiệp bản ngữ
+- đúng ngữ nghĩa 100%
+- tự nhiên trong ngôn ngữ đích
 """
 # 2. Khởi tạo ChromaDB
 local_ef = embedding_functions.DefaultEmbeddingFunction()
@@ -175,7 +233,7 @@ def get_context_prompt(user_input, domain=None):
         is_bypass = item["is_bypass"]
         
         item_domain = str(meta.get("domain", "General"))
-        vi = meta.get("vi", "N/A")
+        vi = meta.get("vietnamese", "N/A")
 
         is_glossary = (
             "glossary" in item_domain.lower()
