@@ -4,6 +4,10 @@ import re
 import unicodedata
 from sentence_transformers import CrossEncoder
 
+# -------------------------------------------------
+# GLOBAL FORCED TRANSLATIONS (domain -> {english: vietnamese})
+# -------------------------------------------------
+
 # 1. System Prompt Template (Tối ưu hóa: Loại bỏ lặp lại văn bản nguồn)
 system_prompt = """Bạn là hệ thống dịch thuật chuyên nghiệp (RAG-based Machine Translation System).
 
@@ -17,7 +21,6 @@ NHIỆM VỤ CHÍNH:
 - Domain: {domain}
 - Glossary (thuật ngữ bắt buộc): {terminology}
 - Context (ngữ cảnh đoạn văn): {context}
-- (Optional) Few-shot examples: {examples}
 
 ---
 
@@ -242,16 +245,15 @@ def get_context_prompt(user_input, domain=None):
         vi = meta.get("vietnamese", "N/A")
 
         is_glossary = (
-            "glossary" in item_domain.lower()
-            and len(text.split()) <= 4
+            "glossary" in str(item_domain).lower()
+            or str(meta.get("type", "")).lower() == "term"
         )
-        
         # Threshold lọc rác
         threshold_met = (is_bypass and score >= 0.7) or (not is_bypass and score >= 0.5)
         
         if is_glossary and threshold_met:
             text_norm = normalize_text(text)
-            pattern = r'\b' + re.escape(text_norm).replace('\\ ', ' ?s?') + r"(?: s)?\b"
+            pattern = r'\b' + re.escape(text_norm).replace(r'\ ', r'\s+') + r'\b'
             if re.search(pattern, user_input_norm):
                 term_entry = f"- {text} => {vi}\n"
                 if term_entry not in glossary_context:
