@@ -1,6 +1,5 @@
 chromadb
 sentence-transformers
-mlx-lm
 requests
 pandas
 tqdm
